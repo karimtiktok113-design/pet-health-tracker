@@ -1883,38 +1883,60 @@
       color: var(--text-main);
       box-shadow: var(--shadow-sm);
     }
-    .wallet-cards-grid {
+    .wallet-cards-grid,
+    .emergency-wallet-card {
       display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      max-width: 720px;
+      margin: 0 auto;
     }
     @media (max-width: 768px) {
-      .wallet-cards-grid {
+      .wallet-cards-grid,
+      .emergency-wallet-card {
         grid-template-columns: 1fr;
+        gap: 14px;
       }
     }
-    .wallet-card-side {
+    .wallet-card-side,
+    .wallet-side {
       background: #ffffff;
       color: #0f172a;
       border: 2px solid #ef4444;
       border-radius: 12px;
-      padding: 18px;
-      min-height: 220px;
+      padding: 16px;
+      min-height: 200px;
       position: relative;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 6px 18px rgba(239, 68, 68, 0.12);
       font-size: 0.82rem;
     }
-    .wallet-card-side-label {
-      font-size: 0.65rem;
-      font-weight: 800;
-      letter-spacing: 0.1em;
-      text-transform: uppercase;
-      color: #ef4444;
-      margin-bottom: 8px;
+    .wallet-card-side-label,
+    .wallet-header {
       display: flex;
+      align-items: center;
       justify-content: space-between;
-      border-bottom: 1px dashed #e2e8f0;
+      margin-bottom: 10px;
+      border-bottom: 1px dashed #fecaca;
       padding-bottom: 4px;
+    }
+    .wallet-badge {
+      background: #ef4444;
+      color: #ffffff;
+      font-weight: 800;
+      font-size: 0.65rem;
+      letter-spacing: 0.06em;
+      padding: 3px 8px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+    .authorization-box {
+      background: #fef2f2;
+      border: 1px solid #fecaca;
+      border-radius: 8px;
+      padding: 10px 12px;
+      font-size: 0.8rem;
+      color: #991b1b;
+      line-height: 1.4;
     }
 
     /* Print Stylesheet for Reports & Emergency Cards */
@@ -1963,7 +1985,7 @@
     }
 
     /* ==========================================================================
-       RESPONSIVE BREAKPOINTS
+       RESPONSIVE BREAKPOINTS & MOBILE-FIRST COMPONENT REARRANGEMENT
        ========================================================================== */
     @media (max-width: 1024px) {
       body {
@@ -2007,68 +2029,651 @@
       }
     }
 
+    /* Tablet & Smartphone Formats (<= 768px) */
     @media (max-width: 768px) {
+      /* Safe area content padding with full clearance above bottom navigation & FAB */
       .app-content {
-        padding: 16px 14px calc(80px + env(safe-area-inset-bottom, 0px));
+        padding: 14px 12px calc(96px + env(safe-area-inset-bottom, 0px)) !important;
+        width: 100% !important;
+        max-width: 100% !important;
       }
-      .grid-2, .grid-3 {
-        grid-template-columns: 1fr;
+
+      /* Prevent iOS Safari auto-zoom on input focus */
+      .form-control, input, select, textarea {
+        font-size: 16px !important;
       }
-      .mobile-bottom-nav {
-        display: flex;
+
+      /* 1. Header & Mobile Top Navigation */
+      .app-header {
+        height: 58px !important;
+        padding: 0 12px !important;
+        background: var(--bg-card) !important;
+        backdrop-filter: none !important;
+        -webkit-backdrop-filter: none !important;
       }
-      .fab-quick-add {
-        display: flex;
-        bottom: calc(74px + env(safe-area-inset-bottom, 0px));
+      .header-left {
+        gap: 8px !important;
       }
+      .header-right {
+        gap: 6px !important;
+      }
+      /* Hide redundant Quick Add button from top header on mobile: thumb-accessible FAB handles this */
+      .btn-quick-add {
+        display: none !important;
+      }
+      .pet-selector-wrapper {
+        padding: 4px 10px !important;
+        max-width: 160px !important;
+        gap: 6px !important;
+      }
+      .pet-avatar-mini {
+        width: 24px !important;
+        height: 24px !important;
+        font-size: 0.72rem !important;
+        flex-shrink: 0 !important;
+      }
+      .pet-selector-text {
+        font-size: 0.82rem !important;
+        max-width: 88px !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        white-space: nowrap !important;
+      }
+      .pet-selector-arrow {
+        width: 12px !important;
+        height: 12px !important;
+        flex-shrink: 0 !important;
+      }
+      /* Floating, bounded sheet for Pet Selector Menu on mobile */
+      .pet-selector-menu {
+        position: fixed !important;
+        top: calc(58px + 8px) !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: calc(100vw - 24px) !important;
+        max-width: 380px !important;
+        margin: 0 auto !important;
+        max-height: 72vh !important;
+        overflow-y: auto !important;
+        box-shadow: 0 16px 40px rgba(0, 0, 0, 0.45) !important;
+        z-index: 1050 !important;
+        border-radius: var(--radius-lg) !important;
+      }
+      .header-action-btn {
+        width: 36px !important;
+        height: 36px !important;
+        flex-shrink: 0 !important;
+      }
+      .search-trigger-btn {
+        width: 36px !important;
+        height: 36px !important;
+        padding: 0 !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        border-radius: var(--radius-full) !important;
+        flex-shrink: 0 !important;
+      }
+      .search-trigger-btn span,
       .search-kbd {
-        display: none;
+        display: none !important;
+      }
+
+      /* 2. Mobile Bottom Navigation & Floating Action Button */
+      .mobile-bottom-nav {
+        display: flex !important;
+        position: fixed !important;
+        bottom: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        height: calc(62px + env(safe-area-inset-bottom, 0px)) !important;
+        padding: 4px 6px env(safe-area-inset-bottom, 0px) !important;
+        background: var(--bg-card) !important;
+        border-top: 1px solid var(--border-color) !important;
+        box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.2) !important;
+        z-index: var(--z-header) !important;
+        align-items: center !important;
+        justify-content: space-around !important;
+      }
+      .bottom-nav-item {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 2px !important;
+        padding: 4px 8px !important;
+        font-size: 0.68rem !important;
+        font-weight: 500 !important;
+        color: var(--text-muted) !important;
+        cursor: pointer !important;
+        min-width: 52px !important;
+        border-radius: var(--radius-sm) !important;
+        transition: color var(--transition-fast), transform var(--transition-fast) !important;
+      }
+      .bottom-nav-item svg {
+        width: 20px !important;
+        height: 20px !important;
+      }
+      .bottom-nav-item.active {
+        color: var(--primary) !important;
+        font-weight: 700 !important;
+      }
+      .bottom-nav-item:active {
+        transform: scale(0.92) !important;
+      }
+
+      /* Floating Action Button (FAB) */
+      .fab-quick-add {
+        display: flex !important;
+        position: fixed !important;
+        bottom: calc(74px + env(safe-area-inset-bottom, 0px)) !important;
+        right: 16px !important;
+        width: 52px !important;
+        height: 52px !important;
+        border-radius: 50% !important;
+        background: var(--primary) !important;
+        color: var(--primary-text) !important;
+        align-items: center !important;
+        justify-content: center !important;
+        box-shadow: 0 8px 24px rgba(var(--primary-rgb), 0.45) !important;
+        z-index: var(--z-fab) !important;
+        border: none !important;
+        cursor: pointer !important;
+        transition: transform var(--transition-fast) !important;
+      }
+      .fab-quick-add:active {
+        transform: scale(0.9) !important;
+      }
+
+      /* 3. Multi-Column Grid Collapses */
+      .grid-2,
+      .grid-3,
+      .grid-2-1,
+      .grid-1-2 {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      /* 4. Executive 2x2 KPI Metric Grids */
+      .kpi-grid,
+      .grid-3:has(> .kpi-card) {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 10px !important;
+        margin-bottom: 16px !important;
+      }
+      .kpi-card {
+        padding: 12px 12px !important;
+        gap: 10px !important;
+        border-radius: var(--radius-md) !important;
+      }
+      .kpi-icon-box {
+        width: 36px !important;
+        height: 36px !important;
+        border-radius: var(--radius-sm) !important;
+        flex-shrink: 0 !important;
+      }
+      .kpi-icon-box svg {
+        width: 18px !important;
+        height: 18px !important;
+      }
+      .kpi-value {
+        font-size: 1.22rem !important;
+        font-weight: 700 !important;
+        line-height: 1.2 !important;
+      }
+      .kpi-label {
+        font-size: 0.7rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.03em !important;
+      }
+      .kpi-trend {
+        font-size: 0.68rem !important;
+        margin-top: 2px !important;
+      }
+      /* Odd KPI card spans full width for balanced 2x2+1 layout */
+      .kpi-grid > .kpi-card:last-child:nth-child(odd),
+      .grid-3 > .kpi-card:last-child:nth-child(odd) {
+        grid-column: 1 / -1 !important;
+      }
+
+      /* 5. View Headers & Action Bars */
+      .view-header {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 12px !important;
+        margin-bottom: 16px !important;
+      }
+      .view-title-group h1 {
+        font-size: 1.35rem !important;
+        line-height: 1.25 !important;
+        letter-spacing: -0.01em !important;
+      }
+      .view-title-group p {
+        font-size: 0.8rem !important;
+        line-height: 1.35 !important;
+        color: var(--text-muted) !important;
+      }
+      .view-actions-group {
+        display: grid !important;
+        grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)) !important;
+        gap: 8px !important;
+        width: 100% !important;
+      }
+      .view-actions-group .btn {
+        width: 100% !important;
+        justify-content: center !important;
+        padding: 9px 12px !important;
+        font-size: 0.82rem !important;
+      }
+
+      /* 6. Cards & Card Headers */
+      .card {
+        padding: 16px 14px !important;
+        border-radius: var(--radius-md) !important;
+        margin-bottom: 12px !important;
+      }
+      .card-header {
+        flex-wrap: wrap !important;
+        gap: 8px !important;
+        margin-bottom: 12px !important;
+      }
+      .card-title {
+        font-size: 0.95rem !important;
+      }
+      .card-subtitle {
+        font-size: 0.75rem !important;
+      }
+
+      /* 7. Dynamic Pet Profile Hero Card (Native iOS/Android Card Layout) */
+      .pet-profile-header-card {
+        display: grid !important;
+        grid-template-columns: 56px 1fr !important;
+        grid-template-areas:
+          "photo info"
+          "actions actions" !important;
+        padding: 14px 14px !important;
+        gap: 12px 14px !important;
+        align-items: center !important;
+        margin-bottom: 16px !important;
+      }
+      .pet-profile-header-card .pet-profile-photo-lg {
+        grid-area: photo !important;
+        width: 56px !important;
+        height: 56px !important;
+        border-radius: var(--radius-md) !important;
+        object-fit: cover !important;
+      }
+      .pet-profile-header-card .pet-profile-info {
+        grid-area: info !important;
+        min-width: 0 !important;
+      }
+      .pet-profile-header-card h2 {
+        font-size: 1.25rem !important;
+      }
+      .pet-profile-tags {
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 4px !important;
+        margin-top: 6px !important;
+      }
+      .pet-profile-header-card > div:last-child {
+        grid-area: actions !important;
+        width: 100% !important;
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        margin-top: 4px !important;
+      }
+      .pet-profile-header-card > div:last-child .btn {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      /* 8. Overdue Banner */
+      #dashboardOverdueBanner {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        padding: 14px !important;
+        gap: 12px !important;
+        margin-bottom: 16px !important;
+      }
+      #dashboardOverdueBanner .btn {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+
+      /* 9. Compact Chart Containers for Mobile */
+      .chart-container,
+      #dashboardWeightChartContainer,
+      #dashboardWellnessChartContainer,
+      #dashboardActivityChartContainer,
+      #dashboardExpenseChartContainer,
+      #wellnessDetailedChartContainer,
+      #weightDetailedChartContainer,
+      #expenseDetailedChartContainer,
+      #analyticsExpenseHistoryChart {
+        height: 195px !important;
+      }
+
+      /* 10. Data Tables & Momentum Scrolling */
+      .table-container {
+        -webkit-overflow-scrolling: touch !important;
+        border-radius: var(--radius-md) !important;
+        position: relative !important;
+        max-width: 100% !important;
+        margin-bottom: 14px !important;
+        box-shadow: inset -8px 0 8px -8px rgba(0, 0, 0, 0.4);
+      }
+      .data-table {
+        min-width: 600px;
+      }
+      .data-table th,
+      .data-table td {
+        padding: 9px 10px !important;
+        font-size: 0.78rem !important;
+        white-space: nowrap !important;
+      }
+      .data-table th {
+        font-size: 0.72rem !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.04em !important;
+      }
+      .data-table .btn-sm {
+        padding: 4px 8px !important;
+        font-size: 0.74rem !important;
+        white-space: nowrap !important;
+      }
+
+      /* 11. Filter Toolbars, Segmented Tabs & Swipeable Chips */
+      .view-container .card div:has(> input[type="text"]),
+      .view-container .card div:has(> input[id$="SearchInput"]) {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+      }
+      .view-container .card input[id$="SearchInput"] {
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .view-container .card select[id$="Filter"] {
+        width: 100% !important;
+        max-width: none !important;
+      }
+      div:has(> #tabMedsActive),
+      div:has(> #btnHealthViewTable) {
+        display: flex !important;
+        width: 100% !important;
+        gap: 6px !important;
+      }
+      div:has(> #tabMedsActive) .btn,
+      div:has(> #btnHealthViewTable) .btn {
+        flex: 1 1 0 !important;
+        text-align: center !important;
+        justify-content: center !important;
+        padding: 8px 10px !important;
+        font-size: 0.8rem !important;
+      }
+      #view-emergency .view-actions-group {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+      }
+      #view-emergency .emergency-format-switch {
+        grid-column: 1 / -1 !important;
+        display: flex !important;
+        width: 100% !important;
+      }
+      #view-emergency .emergency-format-btn {
+        flex: 1 !important;
+        text-align: center !important;
+        justify-content: center !important;
+      }
+      #view-emergency .view-actions-group > .btn {
+        width: 100% !important;
+        justify-content: center !important;
+      }
+      .emergency-card-preview div[style*="grid-template-columns:1fr 1fr"],
+      .emergency-card-preview div[style*="grid-template-columns: 1fr 1fr"] {
+        grid-template-columns: 1fr !important;
+      }
+      .emergency-pet-pills {
+        display: flex !important;
+        flex-wrap: nowrap !important;
+        overflow-x: auto !important;
+        -webkit-overflow-scrolling: touch !important;
+        scrollbar-width: none !important;
+        padding-bottom: 4px !important;
+        gap: 8px !important;
+        margin-bottom: 16px !important;
+      }
+      .emergency-pet-pills::-webkit-scrollbar {
+        display: none !important;
+      }
+      .emergency-pet-pill {
+        flex-shrink: 0 !important;
+        white-space: nowrap !important;
+      }
+      .emergency-card-preview {
+        padding: 16px 14px !important;
+      }
+      .wallet-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 14px !important;
+      }
+
+      /* 12. Modals on Mobile */
+      .modal-overlay {
+        padding: 8px !important;
+        align-items: flex-end !important;
+      }
+      .modal-container {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 92vh !important;
+        max-height: 92dvh !important;
+        border-radius: var(--radius-xl) var(--radius-xl) 0 0 !important;
+        margin: 0 !important;
+      }
+      .modal-header {
+        padding: 14px 16px !important;
+      }
+      .modal-body {
+        padding: 16px 16px !important;
+      }
+      .modal-footer {
+        padding: 12px 16px !important;
+        display: flex !important;
+        gap: 8px !important;
+      }
+      .modal-footer .btn {
+        flex: 1 1 0 !important;
+        justify-content: center !important;
+        padding: 10px 14px !important;
+      }
+      .form-row {
+        grid-template-columns: 1fr !important;
+        gap: 12px !important;
+      }
+
+      /* 13. Mobile Top Toast Positioning */
+      .toast-container {
+        top: calc(58px + 10px) !important;
+        bottom: auto !important;
+        left: 12px !important;
+        right: 12px !important;
+        width: auto !important;
+        max-width: 100% !important;
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        pointer-events: none !important;
+        z-index: 2000 !important;
+      }
+      .toast {
+        width: 100% !important;
+        pointer-events: auto !important;
+        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45) !important;
       }
     }
 
+    /* Small Smartphones (<= 480px) */
     @media (max-width: 480px) {
-      .kpi-grid {
-        grid-template-columns: 1fr;
-      }
-      .modal-overlay {
-        padding: 10px;
-      }
-      .modal-container {
-        max-height: 94vh;
-        max-height: 94dvh;
-        border-radius: var(--radius-lg);
-        margin: auto;
-      }
-      .modal-header {
-        padding: 14px 18px;
-      }
-      .modal-title {
-        font-size: 1.05rem;
-      }
-      .modal-body {
-        padding: 16px 18px;
-      }
-      .modal-footer {
-        padding: 12px 18px;
-        flex-wrap: wrap;
-        gap: 10px;
-      }
-      .modal-footer .btn {
-        flex: 1 1 auto;
-        min-width: 120px;
-        justify-content: center;
-        padding: 10px 16px;
-      }
-      .form-row {
-        grid-template-columns: 1fr;
-        gap: 12px;
-      }
       .app-header {
-        padding: 0 14px;
+        padding: 0 10px !important;
       }
       .pet-selector-wrapper {
-        padding: 5px 10px;
+        padding: 4px 8px !important;
+        max-width: 145px !important;
       }
+      .pet-selector-text {
+        max-width: 75px !important;
+      }
+      .view-title-group h1 {
+        font-size: 1.28rem !important;
+      }
+      .kpi-card {
+        padding: 10px 10px !important;
+      }
+      .kpi-value {
+        font-size: 1.15rem !important;
+      }
+      .kpi-label {
+        font-size: 0.68rem !important;
+      }
+      .card {
+        padding: 14px 12px !important;
+      }
+      .data-table th,
+      .data-table td {
+        padding: 7px 8px !important;
+        font-size: 0.75rem !important;
+      }
+    }
+
+    /* ==========================================================================
+       ENTRY DETAIL MODAL & INTERACTIVE ENTRY STYLES
+       ========================================================================== */
+    .clickable-row,
+    .clickable-card,
+    .clickable-entry {
+      cursor: pointer !important;
+      transition: background var(--transition-fast), transform var(--transition-fast), box-shadow var(--transition-fast);
+    }
+    .clickable-row:hover {
+      background: var(--bg-surface) !important;
+    }
+    .clickable-row:active {
+      background: var(--bg-card-hover) !important;
+    }
+    .clickable-card:hover {
+      border-color: var(--primary) !important;
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md) !important;
+    }
+    .clickable-card:active {
+      transform: translateY(0);
+    }
+    .entry-detail-header-strip {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 16px;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border-color);
+      flex-wrap: wrap;
+    }
+    .entry-detail-pet-info {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+    .entry-detail-pet-avatar {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-md);
+      object-fit: cover;
+      border: 2px solid var(--primary);
+      background: var(--bg-surface);
+      flex-shrink: 0;
+    }
+    .entry-detail-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    @media (max-width: 640px) {
+      .entry-detail-grid {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+      }
+      .entry-detail-header-strip {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 8px !important;
+      }
+      #entryDetailFooter {
+        flex-direction: column-reverse !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+      }
+      #entryDetailFooter > div {
+        width: 100% !important;
+        display: flex !important;
+        gap: 8px !important;
+      }
+      #entryDetailFooter button {
+        flex: 1 !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+    }
+    .entry-detail-field {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 10px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .entry-detail-label {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+    }
+    .entry-detail-value {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--text-main);
+      word-break: break-word;
+    }
+    .entry-detail-notes-box {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+    .entry-detail-notes-title {
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--text-muted);
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
+    .entry-detail-notes-text {
+      font-size: 0.88rem;
+      line-height: 1.5;
+      color: var(--text-main);
+      white-space: pre-wrap;
+      word-break: break-word;
     }
   </style>
 </head>
@@ -4270,10 +4875,11 @@
   <div class="modal-overlay" id="modalWellness">
     <div class="modal-container">
       <div class="modal-header">
-        <div class="modal-title">Daily Wellness Check-in</div>
+        <div class="modal-title" id="modalWellnessTitle">Daily Wellness Check-in</div>
         <button class="modal-close-btn" onclick="app.closeModal('modalWellness')"><svg width="18" height="18"><use href="#icon-x"/></svg></button>
       </div>
       <form id="formWellness" onsubmit="app.handleWellnessSubmit(event)">
+        <input type="hidden" id="wellnessFormId">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
@@ -4359,10 +4965,11 @@
   <div class="modal-overlay" id="modalWeight">
     <div class="modal-container" style="max-width:500px;">
       <div class="modal-header">
-        <div class="modal-title">Log Weight Record</div>
+        <div class="modal-title" id="modalWeightTitle">Log Weight Record</div>
         <button class="modal-close-btn" onclick="app.closeModal('modalWeight')"><svg width="18" height="18"><use href="#icon-x"/></svg></button>
       </div>
       <form id="formWeight" onsubmit="app.handleWeightSubmit(event)">
+        <input type="hidden" id="weightFormId">
         <div class="modal-body">
           <div class="form-group">
             <label class="form-label">Pet *</label>
@@ -4413,7 +5020,7 @@
   <div class="modal-overlay" id="modalNutrition">
     <div class="modal-container">
       <div class="modal-header">
-        <div class="modal-title">Add Nutrition & Feeding Plan</div>
+        <div class="modal-title" id="modalNutritionTitle">Add Nutrition & Feeding Plan</div>
         <button class="modal-close-btn" onclick="app.closeModal('modalNutrition')"><svg width="18" height="18"><use href="#icon-x"/></svg></button>
       </div>
       <form id="formNutrition" onsubmit="app.handleNutritionSubmit(event)">
@@ -4471,10 +5078,11 @@
   <div class="modal-overlay" id="modalActivity">
     <div class="modal-container" style="max-width:540px;">
       <div class="modal-header">
-        <div class="modal-title">Log Activity & Exercise</div>
+        <div class="modal-title" id="modalActivityTitle">Log Activity & Exercise</div>
         <button class="modal-close-btn" onclick="app.closeModal('modalActivity')"><svg width="18" height="18"><use href="#icon-x"/></svg></button>
       </div>
       <form id="formActivity" onsubmit="app.handleActivitySubmit(event)">
+        <input type="hidden" id="activityFormId">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
@@ -4534,10 +5142,11 @@
   <div class="modal-overlay" id="modalGrooming">
     <div class="modal-container" style="max-width:540px;">
       <div class="modal-header">
-        <div class="modal-title">Record Grooming Session</div>
+        <div class="modal-title" id="modalGroomingTitle">Record Grooming Session</div>
         <button class="modal-close-btn" onclick="app.closeModal('modalGrooming')"><svg width="18" height="18"><use href="#icon-x"/></svg></button>
       </div>
       <form id="formGrooming" onsubmit="app.handleGroomingSubmit(event)">
+        <input type="hidden" id="groomingFormId">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
@@ -4654,10 +5263,11 @@
   <div class="modal-overlay" id="modalReminder">
     <div class="modal-container" style="max-width:540px;">
       <div class="modal-header">
-        <div class="modal-title">Create Smart Reminder</div>
+        <div class="modal-title" id="modalReminderTitle">Create Smart Reminder</div>
         <button class="modal-close-btn" onclick="app.closeModal('modalReminder')"><svg width="18" height="18"><use href="#icon-x"/></svg></button>
       </div>
       <form id="formReminder" onsubmit="app.handleReminderSubmit(event)">
+        <input type="hidden" id="reminderFormId">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
@@ -4712,10 +5322,11 @@
   <div class="modal-overlay" id="modalExpense">
     <div class="modal-container" style="max-width:540px;">
       <div class="modal-header">
-        <div class="modal-title">Record Pet Expense</div>
+        <div class="modal-title" id="modalExpenseTitle">Record Pet Expense</div>
         <button class="modal-close-btn" onclick="app.closeModal('modalExpense')"><svg width="18" height="18"><use href="#icon-x"/></svg></button>
       </div>
       <form id="formExpense" onsubmit="app.handleExpenseSubmit(event)">
+        <input type="hidden" id="expenseFormId">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
@@ -4768,10 +5379,11 @@
   <div class="modal-overlay" id="modalDocument">
     <div class="modal-container" style="max-width:540px;">
       <div class="modal-header">
-        <div class="modal-title">Upload Pet Document</div>
+        <div class="modal-title" id="modalDocTitle">Upload Pet Document</div>
         <button class="modal-close-btn" onclick="app.closeModal('modalDocument')"><svg width="18" height="18"><use href="#icon-x"/></svg></button>
       </div>
       <form id="formDocument" onsubmit="app.handleDocumentSubmit(event)">
+        <input type="hidden" id="docFormId">
         <div class="modal-body">
           <div class="form-row">
             <div class="form-group">
@@ -4872,6 +5484,39 @@
       <div class="modal-footer">
         <button type="button" class="btn btn-secondary" onclick="app.closeModal('modalConfirm')">Cancel</button>
         <button type="button" class="btn btn-danger" id="confirmModalActionBtn">Delete</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- 19. RESPONSIVE ENTRY DETAIL MODAL -->
+  <div class="modal-overlay" id="modalEntryDetail">
+    <div class="modal-container entry-detail-modal" style="max-width:680px;">
+      <div class="modal-header">
+        <div class="modal-title" id="entryDetailTitle" style="display:flex; align-items:center; gap:8px;">
+          <svg width="20" height="20" style="color:var(--primary);"><use href="#icon-info"/></svg>
+          <span>Entry Details</span>
+        </div>
+        <button type="button" class="modal-close-btn" onclick="app.closeModal('modalEntryDetail')" aria-label="Close modal">
+          <svg width="18" height="18"><use href="#icon-x"/></svg>
+        </button>
+      </div>
+      <div class="modal-body" id="entryDetailBody" style="max-height: calc(85vh - 140px); overflow-y: auto;">
+        <!-- Dynamic entry information injected here -->
+      </div>
+      <div class="modal-footer" id="entryDetailFooter" style="display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px;">
+        <div style="display:flex; gap:8px;">
+          <button type="button" class="btn btn-danger" id="entryDetailDeleteBtn" style="display:inline-flex; align-items:center; gap:6px;">
+            <svg width="16" height="16"><use href="#icon-trash"/></svg>
+            <span>Delete Entry</span>
+          </button>
+        </div>
+        <div style="display:flex; gap:8px; align-items:center;">
+          <button type="button" class="btn btn-secondary" onclick="app.closeModal('modalEntryDetail')">Close</button>
+          <button type="button" class="btn btn-primary" id="entryDetailEditBtn" style="display:inline-flex; align-items:center; gap:6px;">
+            <svg width="16" height="16"><use href="#icon-edit"/></svg>
+            <span>Edit Entry</span>
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -5962,18 +6607,18 @@ const app = {
       if (p.appointments) {
         p.appointments.forEach(a => {
           if (a.status === 'Upcoming') {
-            items.push({ date: a.date, title: `${a.type} (${a.clinic})`, pet: p.name, badge: 'Appointment', color: 'info' });
+            items.push({ id: a.id, petId: p.id, category: 'appointment', date: a.date, title: `${a.type} (${a.clinic})`, pet: p.name, badge: 'Appointment', color: 'info' });
           }
         });
       }
       if (p.vaccinations) {
         p.vaccinations.forEach(v => {
-          items.push({ date: v.dueDate, title: `Vaccine Due: ${v.name}`, pet: p.name, badge: 'Vaccine', color: 'primary' });
+          items.push({ id: v.id, petId: p.id, category: 'vaccine', date: v.dueDate, title: `Vaccine Due: ${v.name}`, pet: p.name, badge: 'Vaccine', color: 'primary' });
         });
       }
       if (p.preventiveCare) {
         p.preventiveCare.forEach(pv => {
-          items.push({ date: pv.nextDue, title: `Preventive: ${pv.name}`, pet: p.name, badge: 'Preventive', color: 'warning' });
+          items.push({ id: pv.id, petId: p.id, category: 'preventive', date: pv.nextDue, title: `Preventive: ${pv.name}`, pet: p.name, badge: 'Preventive', color: 'warning' });
         });
       }
     });
@@ -5990,6 +6635,7 @@ const app = {
     nextFive.forEach(item => {
       const isOverdue = this.isDateOverdue(item.date);
       const row = document.createElement('div');
+      row.className = 'clickable-row';
       row.style.display = 'flex';
       row.style.alignItems = 'center';
       row.style.justifyContent = 'space-between';
@@ -5997,6 +6643,8 @@ const app = {
       row.style.background = 'var(--bg-surface)';
       row.style.borderRadius = 'var(--radius-md)';
       row.style.gap = '10px';
+      row.style.cursor = 'pointer';
+      row.onclick = () => this.showEntryDetail(item.category, item.petId, item.id);
 
       row.innerHTML = `
         <div style="display:flex; align-items:center; gap:10px;">
@@ -6021,7 +6669,7 @@ const app = {
     this.state.pets.forEach(p => {
       if (p.healthRecords) {
         p.healthRecords.forEach(hr => {
-          records.push({ ...hr, petName: p.name });
+          records.push({ ...hr, petName: p.name, petId: p.id });
         });
       }
     });
@@ -6036,6 +6684,7 @@ const app = {
 
     recent.forEach(r => {
       const row = document.createElement('div');
+      row.className = 'clickable-row';
       row.style.display = 'flex';
       row.style.alignItems = 'center';
       row.style.justifyContent = 'space-between';
@@ -6043,6 +6692,8 @@ const app = {
       row.style.background = 'var(--bg-surface)';
       row.style.borderRadius = 'var(--radius-md)';
       row.style.gap = '10px';
+      row.style.cursor = 'pointer';
+      row.onclick = () => this.showEntryDetail('health', r.petId, r.id);
 
       row.innerHTML = `
         <div style="display:flex; align-items:center; gap:10px;">
@@ -6137,6 +6788,8 @@ const app = {
 
     records.forEach(r => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('health', r.petId, r.id);
       tr.innerHTML = `
         <td style="font-weight:600; white-space:nowrap;">${r.date}</td>
         <td><span class="badge badge-neutral">${r.petName}</span></td>
@@ -6147,8 +6800,8 @@ const app = {
         <td style="font-weight:600;">${r.cost ? this.formatCurrency(r.cost) : '--'}</td>
         <td>
           <div style="display:flex; gap:6px;">
-            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="app.editHealthRecord('${r.petId}', '${r.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
-            <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteHealthRecord('${r.petId}', '${r.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editHealthRecord('${r.petId}', '${r.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteHealthRecord('${r.petId}', '${r.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
           </div>
         </td>
       `;
@@ -6194,6 +6847,8 @@ const app = {
 
     records.forEach(r => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('health', r.petId, r.id);
       tr.innerHTML = `
         <td style="font-weight:600; white-space:nowrap;">${r.date}</td>
         <td><span class="badge badge-neutral">${r.petName}</span></td>
@@ -6204,8 +6859,8 @@ const app = {
         <td style="font-weight:600;">${r.cost ? this.formatCurrency(r.cost) : '--'}</td>
         <td>
           <div style="display:flex; gap:6px;">
-            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="app.editHealthRecord('${r.petId}', '${r.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
-            <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteHealthRecord('${r.petId}', '${r.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editHealthRecord('${r.petId}', '${r.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteHealthRecord('${r.petId}', '${r.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
           </div>
         </td>
       `;
@@ -6243,7 +6898,7 @@ const app = {
     let records = [];
     pets.forEach(p => {
       if (p.healthRecords) {
-        p.healthRecords.forEach(hr => records.push({ ...hr, petName: p.name }));
+        p.healthRecords.forEach(hr => records.push({ ...hr, petName: p.name, petId: p.id }));
       }
     });
     records.sort((a, b) => new Date(b.date) - new Date(a.date));
@@ -6254,7 +6909,7 @@ const app = {
       node.style.marginBottom = '24px';
       node.innerHTML = `
         <div style="position:absolute; left:-24px; top:4px; width:14px; height:14px; border-radius:50%; background:var(--primary); border:3px solid var(--bg-card);"></div>
-        <div class="card" style="padding:16px 20px;">
+        <div class="card clickable-card" style="padding:16px 20px; cursor:pointer;" onclick="app.showEntryDetail('health', '${r.petId}', '${r.id}')">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:6px;">
             <div style="font-weight:700; font-size:1rem; color:var(--text-main);">${r.diagnosis}</div>
             <span class="badge badge-primary">${r.type}</span>
@@ -6297,6 +6952,8 @@ const app = {
 
     meds.forEach(m => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('medication', m.petId, m.id);
       const doseTakenToday = m.lastTakenDate === todayStr;
 
       tr.innerHTML = `
@@ -6313,15 +6970,15 @@ const app = {
         </td>
         <td>
           ${m.status === 'Active' ? `
-            <button class="btn btn-sm ${doseTakenToday ? 'btn-secondary' : 'btn-primary'}" onclick="app.toggleDoseGiven('${m.petId}', '${m.id}')">
+            <button class="btn btn-sm ${doseTakenToday ? 'btn-secondary' : 'btn-primary'}" onclick="event.stopPropagation(); app.toggleDoseGiven('${m.petId}', '${m.id}')">
               ${doseTakenToday ? '✓ Dose Logged' : 'Mark Dose Given'}
             </button>
           ` : '<span class="badge badge-neutral">Completed</span>'}
         </td>
         <td>
           <div style="display:flex; gap:6px;">
-            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="app.editMedication('${m.petId}', '${m.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
-            <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteMedication('${m.petId}', '${m.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editMedication('${m.petId}', '${m.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteMedication('${m.petId}', '${m.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
           </div>
         </td>
       `;
@@ -6391,6 +7048,8 @@ const app = {
 
     vaccines.forEach(v => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('vaccine', v.petId, v.id);
       let statusBadge = '<span class="badge badge-success">Up to Date</span>';
       if (v.isOver) statusBadge = '<span class="badge badge-danger">Overdue</span>';
       else if (v.isSoon) statusBadge = '<span class="badge badge-warning">Due Soon</span>';
@@ -6405,8 +7064,9 @@ const app = {
         <td>${statusBadge}</td>
         <td>
           <div style="display:flex; gap:6px;">
-            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="app.printVaccineCert('${v.petId}', '${v.id}')" title="Print Certificate"><svg width="14" height="14"><use href="#icon-print"/></svg></button>
-            <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteVaccine('${v.petId}', '${v.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editVaccine('${v.petId}', '${v.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.printVaccineCert('${v.petId}', '${v.id}')" title="Print Certificate"><svg width="14" height="14"><use href="#icon-print"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteVaccine('${v.petId}', '${v.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
           </div>
         </td>
       `;
@@ -6486,6 +7146,8 @@ const app = {
       else if (isSoon) statusBadge = '<span class="badge badge-warning">Due Soon</span>';
 
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('preventive', pv.petId, pv.id);
       tr.innerHTML = `
         <td><span class="badge badge-neutral">${pv.petName}</span></td>
         <td><span class="badge badge-primary">${pv.category}</span></td>
@@ -6495,10 +7157,13 @@ const app = {
         <td style="font-weight:700;">${pv.nextDue}</td>
         <td>${statusBadge}</td>
         <td>
-          <button class="btn btn-sm btn-secondary" onclick="app.completePreventiveToday('${pv.petId}', '${pv.id}')">Done Today</button>
+          <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); app.completePreventiveToday('${pv.petId}', '${pv.id}')">Done Today</button>
         </td>
         <td>
-          <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deletePreventive('${pv.petId}', '${pv.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editPreventive('${pv.petId}', '${pv.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deletePreventive('${pv.petId}', '${pv.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -6558,6 +7223,8 @@ const app = {
 
     logs.forEach(l => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('wellness', l.petId, l.id);
       const flags = [];
       if (l.pain) flags.push('Pain/Limp');
       if (l.vomiting) flags.push('Vomiting');
@@ -6575,7 +7242,10 @@ const app = {
         <td>${flags.length > 0 ? `<span class="badge badge-danger">${flags.join(', ')}</span>` : '<span class="badge badge-neutral">None</span>'}</td>
         <td style="max-width:200px; font-size:0.84rem;">${l.notes || '--'}</td>
         <td>
-          <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteWellness('${l.petId}', '${l.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editWellness('${l.petId}', '${l.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteWellness('${l.petId}', '${l.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -6691,6 +7361,8 @@ const app = {
       const deltaText = Number(deltaVal) > 0 ? `+${deltaVal}` : deltaVal;
 
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('weight', e.petId, e.id);
       tr.innerHTML = `
         <td style="font-weight:600;">${e.date}</td>
         <td><span class="badge badge-neutral">${e.petName}</span></td>
@@ -6700,7 +7372,10 @@ const app = {
         <td><span class="badge badge-neutral">${e.bcs ? `${e.bcs} / 9` : '5 / 9'}</span></td>
         <td style="font-size:0.84rem;">${e.notes || '--'}</td>
         <td>
-          <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteWeight('${e.petId}', '${e.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editWeight('${e.petId}', '${e.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteWeight('${e.petId}', '${e.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -6728,6 +7403,8 @@ const app = {
 
     plans.forEach(n => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('nutrition', n.petId, n.id);
       tr.innerHTML = `
         <td><span class="badge badge-neutral">${n.petName}</span></td>
         <td><strong>${n.brand}</strong></td>
@@ -6737,7 +7414,10 @@ const app = {
         <td style="color:var(--danger); font-weight:600; font-size:0.84rem;">${n.restrictions || 'None'}</td>
         <td style="font-size:0.84rem;">${n.notes || '--'}</td>
         <td>
-          <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteNutrition('${n.petId}', '${n.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editNutrition('${n.petId}', '${n.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteNutrition('${n.petId}', '${n.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -6777,6 +7457,8 @@ const app = {
 
     logs.forEach(a => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('activity', a.petId, a.id);
       tr.innerHTML = `
         <td style="font-weight:600;">${a.date}</td>
         <td><span class="badge badge-neutral">${a.petName}</span></td>
@@ -6786,7 +7468,10 @@ const app = {
         <td><span class="badge badge-neutral">${a.intensity || 'Moderate'}</span></td>
         <td style="font-size:0.84rem;">${a.notes || '--'}</td>
         <td>
-          <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteActivity('${a.petId}', '${a.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editActivity('${a.petId}', '${a.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteActivity('${a.petId}', '${a.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -6816,6 +7501,8 @@ const app = {
 
     records.forEach(g => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('grooming', g.petId, g.id);
       tr.innerHTML = `
         <td style="font-weight:600;">${g.date}</td>
         <td><span class="badge badge-neutral">${g.petName}</span></td>
@@ -6825,7 +7512,10 @@ const app = {
         <td>${g.nextDue || '--'}</td>
         <td style="font-size:0.84rem;">${g.notes || '--'}</td>
         <td>
-          <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteGrooming('${g.petId}', '${g.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editGrooming('${g.petId}', '${g.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteGrooming('${g.petId}', '${g.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -6855,6 +7545,8 @@ const app = {
 
     appts.forEach(a => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('appointment', a.petId, a.id);
       const isOver = a.status === 'Upcoming' && this.isDateOverdue(a.date);
       let statusBadge = `<span class="badge ${a.status === 'Completed' ? 'badge-success' : a.status === 'Cancelled' ? 'badge-neutral' : isOver ? 'badge-danger' : 'badge-primary'}">${isOver ? 'Passed' : a.status}</span>`;
 
@@ -6867,12 +7559,13 @@ const app = {
         <td>${statusBadge}</td>
         <td style="font-weight:600;">${a.cost ? this.formatCurrency(a.cost) : '--'}</td>
         <td>
-          <button class="btn btn-sm btn-secondary" onclick="app.exportICalendar('${a.petId}', '${a.id}')" title="Add to Calendar">.ics</button>
+          <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); app.exportICalendar('${a.petId}', '${a.id}')" title="Add to Calendar">.ics</button>
         </td>
         <td>
           <div style="display:flex; gap:6px;">
-            ${a.status === 'Upcoming' ? `<button class="btn btn-sm btn-secondary" onclick="app.completeAppointment('${a.petId}', '${a.id}')">Done</button>` : ''}
-            <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteAppointment('${a.petId}', '${a.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+            ${a.status === 'Upcoming' ? `<button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); app.completeAppointment('${a.petId}', '${a.id}')">Done</button>` : ''}
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editAppointment('${a.petId}', '${a.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteAppointment('${a.petId}', '${a.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
           </div>
         </td>
       `;
@@ -6978,9 +7671,12 @@ const app = {
       const isToday = r.date === new Date().toISOString().split('T')[0];
 
       const item = document.createElement('div');
-      item.className = 'card';
+      item.className = 'card clickable-card';
       item.style.padding = '14px 18px';
       item.style.borderLeft = isOver ? '4px solid var(--danger)' : isToday ? '4px solid var(--warning)' : '4px solid var(--primary)';
+      const targetCat = r.id.startsWith('auto-vac-') ? 'vaccine' : (r.id.startsWith('auto-prev-') ? 'preventive' : 'reminder');
+      const targetId = r.id.startsWith('auto-vac-') ? r.id.replace('auto-vac-', '') : (r.id.startsWith('auto-prev-') ? r.id.replace('auto-prev-', '') : r.id);
+      item.onclick = () => this.showEntryDetail(targetCat, r.petId, targetId);
 
       item.innerHTML = `
         <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:6px;">
@@ -6992,7 +7688,12 @@ const app = {
         </div>
         ${r.notes ? `<div style="font-size:0.82rem; color:var(--text-muted); margin-bottom:8px;">${r.notes}</div>` : ''}
         <div style="display:flex; justify-content:flex-end; gap:6px;">
-          ${!r.isAuto ? `<button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteReminder('${r.petId}', '${r.id}')"><svg width="12" height="12"><use href="#icon-trash"/></svg></button>` : ''}
+          ${!r.isAuto ? `
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editReminder('${r.petId}', '${r.id}')" title="Edit"><svg width="12" height="12"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteReminder('${r.petId}', '${r.id}')" title="Delete"><svg width="12" height="12"><use href="#icon-trash"/></svg></button>
+          ` : `
+            <button class="btn btn-sm btn-secondary" onclick="event.stopPropagation(); app.showEntryDetail('${targetCat}', '${r.petId}', '${targetId}')">View Record</button>
+          `}
         </div>
       `;
 
@@ -7087,6 +7788,8 @@ const app = {
 
     expenses.forEach(e => {
       const tr = document.createElement('tr');
+      tr.className = 'clickable-row';
+      tr.onclick = () => this.showEntryDetail('expense', e.petId, e.id);
       tr.innerHTML = `
         <td style="font-weight:600; white-space:nowrap;">${e.date}</td>
         <td><span class="badge badge-neutral">${e.petName}</span></td>
@@ -7095,7 +7798,10 @@ const app = {
         <td>${e.vendor || '--'}</td>
         <td style="font-weight:700; color:var(--text-main);">${this.formatCurrency(e.amount)}</td>
         <td>
-          <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteExpense('${e.petId}', '${e.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editExpense('${e.petId}', '${e.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteExpense('${e.petId}', '${e.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          </div>
         </td>
       `;
       tbody.appendChild(tr);
@@ -7123,7 +7829,8 @@ const app = {
 
     docs.forEach(d => {
       const card = document.createElement('div');
-      card.className = 'card';
+      card.className = 'card clickable-card';
+      card.onclick = () => this.showEntryDetail('document', d.petId, d.id);
       card.innerHTML = `
         <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
           <div style="width:40px; height:40px; border-radius:var(--radius-md); background:rgba(var(--primary-rgb),0.12); color:var(--primary); display:flex; align-items:center; justify-content:center;">
@@ -7137,7 +7844,10 @@ const app = {
         <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:16px;">${d.notes || 'Secure offline document record.'}</div>
         <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:12px;">
           <span style="font-size:0.75rem; color:var(--text-dim);">${d.date || 'Saved'}</span>
-          <button class="btn btn-sm btn-danger btn-icon-only" onclick="app.deleteDocument('${d.petId}', '${d.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          <div style="display:flex; gap:6px;">
+            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editDocument('${d.petId}', '${d.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
+            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteDocument('${d.petId}', '${d.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          </div>
         </div>
       `;
       container.appendChild(card);
@@ -7156,19 +7866,19 @@ const app = {
 
     pets.forEach(p => {
       if ((filter === 'all' || filter === 'health') && p.healthRecords) {
-        p.healthRecords.forEach(hr => events.push({ date: hr.date, type: 'Medical Visit', title: hr.diagnosis, desc: hr.treatment, pet: p.name, color: 'primary', icon: 'heart-pulse' }));
+        p.healthRecords.forEach(hr => events.push({ id: hr.id, petId: p.id, category: 'health', date: hr.date, type: 'Medical Visit', title: hr.diagnosis, desc: hr.treatment, pet: p.name, color: 'primary', icon: 'heart-pulse' }));
       }
       if ((filter === 'all' || filter === 'vaccine') && p.vaccinations) {
-        p.vaccinations.forEach(v => events.push({ date: v.adminDate, type: 'Vaccination', title: `Immunized: ${v.name}`, desc: `Clinic: ${v.vet || 'Vet'} • Lot: ${v.lotNumber || 'N/A'}`, pet: p.name, color: 'success', icon: 'syringe' }));
+        p.vaccinations.forEach(v => events.push({ id: v.id, petId: p.id, category: 'vaccine', date: v.adminDate, type: 'Vaccination', title: `Immunized: ${v.name}`, desc: `Clinic: ${v.vet || 'Vet'} • Lot: ${v.lotNumber || 'N/A'}`, pet: p.name, color: 'success', icon: 'syringe' }));
       }
       if ((filter === 'all' || filter === 'weight') && Array.isArray(p.weight)) {
-        p.weight.forEach(w => events.push({ date: w.date, type: 'Weight Check', title: `Weighed ${this.formatWeight(w.weight)}`, desc: `BCS: ${w.bcs || 5}/9 • Notes: ${w.notes || 'Normal'}`, pet: p.name, color: 'accent', icon: 'scale' }));
+        p.weight.forEach(w => events.push({ id: w.id, petId: p.id, category: 'weight', date: w.date, type: 'Weight Check', title: `Weighed ${this.formatWeight(w.weight)}`, desc: `BCS: ${w.bcs || 5}/9 • Notes: ${w.notes || 'Normal'}`, pet: p.name, color: 'accent', icon: 'scale' }));
       }
       if ((filter === 'all' || filter === 'wellness') && p.wellness) {
-        p.wellness.forEach(wl => events.push({ date: wl.date, type: 'Daily Wellness', title: `Wellness Score: ${wl.score}%`, desc: `Appetite: ${wl.appetite}/5 • Energy: ${wl.energy}/5 • ${wl.notes || ''}`, pet: p.name, color: 'info', icon: 'activity' }));
+        p.wellness.forEach(wl => events.push({ id: wl.id, petId: p.id, category: 'wellness', date: wl.date, type: 'Daily Wellness', title: `Wellness Score: ${wl.score}%`, desc: `Appetite: ${wl.appetite}/5 • Energy: ${wl.energy}/5 • ${wl.notes || ''}`, pet: p.name, color: 'info', icon: 'activity' }));
       }
       if ((filter === 'all' || filter === 'appointment') && p.appointments) {
-        p.appointments.forEach(ap => events.push({ date: ap.date, type: 'Appointment', title: `${ap.type} (${ap.status})`, desc: `${ap.clinic} • ${ap.reason || ''}`, pet: p.name, color: 'warning', icon: 'calendar' }));
+        p.appointments.forEach(ap => events.push({ id: ap.id, petId: p.id, category: 'appointment', date: ap.date, type: 'Appointment', title: `${ap.type} (${ap.status})`, desc: `${ap.clinic} • ${ap.reason || ''}`, pet: p.name, color: 'warning', icon: 'calendar' }));
       }
     });
 
@@ -7185,7 +7895,7 @@ const app = {
       node.style.marginBottom = '22px';
       node.innerHTML = `
         <div style="position:absolute; left:-24px; top:4px; width:14px; height:14px; border-radius:50%; background:var(--${ev.color}); border:3px solid var(--bg-card);"></div>
-        <div class="card" style="padding:14px 18px;">
+        <div class="card clickable-card" style="padding:14px 18px;" onclick="app.showEntryDetail('${ev.category}', '${ev.petId}', '${ev.id}')">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:4px;">
             <strong style="font-size:0.95rem; color:var(--text-main);">${ev.title}</strong>
             <span class="badge badge-${ev.color}">${ev.type}</span>
@@ -8436,6 +9146,8 @@ const app = {
   openVaccinationModal() {
     document.getElementById('formVaccination').reset();
     document.getElementById('vaccineFormId').value = '';
+    const titleEl = document.getElementById('modalVaccineTitle');
+    if (titleEl) titleEl.textContent = 'Record Vaccination';
     document.getElementById('vaccineFormAdminDate').value = new Date().toISOString().split('T')[0];
     this.openModal('modalVaccination');
   },
@@ -8465,7 +9177,7 @@ const app = {
 
     this.saveState(true);
     this.closeModal('modalVaccination');
-    this.showToast('Vaccination record logged', 'success');
+    this.showToast('Vaccination record saved', 'success');
   },
 
   deleteVaccine(petId, id) {
@@ -8478,10 +9190,33 @@ const app = {
     });
   },
 
+  editVaccine(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.vaccinations) return;
+    const v = pet.vaccinations.find(x => x.id === id);
+    if (!v) return;
+
+    document.getElementById('vaccineFormId').value = v.id;
+    document.getElementById('vaccineFormPet').value = petId;
+    document.getElementById('vaccineFormName').value = v.name || '';
+    document.getElementById('vaccineFormAdminDate').value = v.adminDate || '';
+    document.getElementById('vaccineFormDueDate').value = v.dueDate || '';
+    document.getElementById('vaccineFormLot').value = v.lotNumber || '';
+    document.getElementById('vaccineFormCert').value = v.certNumber || '';
+    document.getElementById('vaccineFormVet').value = v.vet || '';
+    document.getElementById('vaccineFormNotes').value = v.notes || '';
+
+    const titleEl = document.getElementById('modalVaccineTitle');
+    if (titleEl) titleEl.textContent = 'Edit Vaccination Record';
+    this.openModal('modalVaccination');
+  },
+
   // Preventive Care Modal
   openPreventiveModal() {
     document.getElementById('formPreventive').reset();
     document.getElementById('preventiveFormId').value = '';
+    const titleEl = document.getElementById('modalPreventiveTitle');
+    if (titleEl) titleEl.textContent = 'Add Preventive Care Schedule';
     document.getElementById('preventiveFormLastDate').value = new Date().toISOString().split('T')[0];
     this.openModal('modalPreventive');
   },
@@ -8504,7 +9239,9 @@ const app = {
     };
 
     if (!pet.preventiveCare) pet.preventiveCare = [];
-    pet.preventiveCare.unshift(newPrev);
+    const idx = pet.preventiveCare.findIndex(p => p.id === id);
+    if (idx >= 0) pet.preventiveCare[idx] = newPrev;
+    else pet.preventiveCare.unshift(newPrev);
 
     this.saveState(true);
     this.closeModal('modalPreventive');
@@ -8514,14 +9251,39 @@ const app = {
   deletePreventive(petId, id) {
     const pet = this.getPet(petId);
     if (!pet) return;
-    pet.preventiveCare = pet.preventiveCare.filter(p => p.id !== id);
-    this.saveState(true);
-    this.showToast('Preventive item removed', 'info');
+    this.openConfirmModal('Delete Preventive Item?', 'Permanently remove this preventive schedule?', () => {
+      pet.preventiveCare = pet.preventiveCare.filter(p => p.id !== id);
+      this.saveState(true);
+      this.showToast('Preventive item removed', 'info');
+    });
+  },
+
+  editPreventive(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.preventiveCare) return;
+    const pv = pet.preventiveCare.find(x => x.id === id);
+    if (!pv) return;
+
+    document.getElementById('preventiveFormId').value = pv.id;
+    document.getElementById('preventiveFormPet').value = petId;
+    document.getElementById('preventiveFormCategory').value = pv.category || 'Flea & Tick';
+    document.getElementById('preventiveFormName').value = pv.name || '';
+    document.getElementById('preventiveFormFrequency').value = pv.frequency || 'Monthly';
+    document.getElementById('preventiveFormLastDate').value = pv.lastCompleted || '';
+    document.getElementById('preventiveFormDueDate').value = pv.nextDue || '';
+    document.getElementById('preventiveFormNotes').value = pv.notes || '';
+
+    const titleEl = document.getElementById('modalPreventiveTitle');
+    if (titleEl) titleEl.textContent = 'Edit Preventive Care Schedule';
+    this.openModal('modalPreventive');
   },
 
   // Wellness Modal
   openWellnessModal() {
     document.getElementById('formWellness').reset();
+    document.getElementById('wellnessFormId').value = '';
+    const titleEl = document.getElementById('modalWellnessTitle');
+    if (titleEl) titleEl.textContent = 'Daily Wellness Check-in';
     document.getElementById('wellnessFormDate').value = new Date().toISOString().split('T')[0];
     this.openModal('modalWellness');
   },
@@ -8532,6 +9294,7 @@ const app = {
     const pet = this.getPet(petId);
     if (!pet) return;
 
+    const id = document.getElementById('wellnessFormId').value || 'well-' + Date.now();
     const app = parseInt(document.getElementById('wellnessFormAppetite').value);
     const wat = parseInt(document.getElementById('wellnessFormWater').value);
     const nrg = parseInt(document.getElementById('wellnessFormEnergy').value);
@@ -8551,7 +9314,7 @@ const app = {
     const finalScore = Math.max(10, Math.min(100, Math.round(baseScore)));
 
     const log = {
-      id: 'well-' + Date.now(),
+      id,
       date: document.getElementById('wellnessFormDate').value,
       score: finalScore,
       appetite: app,
@@ -8566,7 +9329,9 @@ const app = {
     };
 
     if (!pet.wellness) pet.wellness = [];
-    pet.wellness.unshift(log);
+    const idx = pet.wellness.findIndex(w => w.id === id);
+    if (idx >= 0) pet.wellness[idx] = log;
+    else pet.wellness.unshift(log);
 
     this.saveState(true);
     this.closeModal('modalWellness');
@@ -8576,15 +9341,45 @@ const app = {
   deleteWellness(petId, id) {
     const pet = this.getPet(petId);
     if (!pet) return;
-    pet.wellness = pet.wellness.filter(w => w.id !== id);
-    this.saveState(true);
-    this.showToast('Wellness log deleted', 'info');
+    this.openConfirmModal('Delete Wellness Log?', 'Remove this daily wellness check-in?', () => {
+      pet.wellness = pet.wellness.filter(w => w.id !== id);
+      this.saveState(true);
+      this.showToast('Wellness log deleted', 'info');
+    });
+  },
+
+  editWellness(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.wellness) return;
+    const log = pet.wellness.find(w => w.id === id);
+    if (!log) return;
+
+    document.getElementById('wellnessFormId').value = log.id;
+    document.getElementById('wellnessFormPet').value = petId;
+    document.getElementById('wellnessFormDate').value = log.date || '';
+    document.getElementById('wellnessFormAppetite').value = log.appetite || 4;
+    document.getElementById('wellnessFormWater').value = log.water || 4;
+    document.getElementById('wellnessFormEnergy').value = log.energy || 4;
+    document.getElementById('wellnessFormDigestion').value = log.digestion || 4;
+    document.getElementById('wellnessFlagPain').checked = !!log.pain;
+    document.getElementById('wellnessFlagVomiting').checked = !!log.vomiting;
+    document.getElementById('wellnessFlagCoughing').checked = !!log.coughing;
+    document.getElementById('wellnessFlagScratching').checked = !!log.scratching;
+    document.getElementById('wellnessFormNotes').value = log.notes || '';
+
+    const titleEl = document.getElementById('modalWellnessTitle');
+    if (titleEl) titleEl.textContent = 'Edit Daily Wellness Check-in';
+    this.openModal('modalWellness');
   },
 
   // Weight Modal
   openWeightModal() {
     const form = document.getElementById('formWeight');
     if (form) form.reset();
+    const idInput = document.getElementById('weightFormId');
+    if (idInput) idInput.value = '';
+    const titleEl = document.getElementById('modalWeightTitle');
+    if (titleEl) titleEl.textContent = 'Log Weight Record';
     const dateInput = document.getElementById('weightFormDate');
     if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
 
@@ -8646,9 +9441,10 @@ const app = {
     const dateVal = document.getElementById('weightFormDate').value || new Date().toISOString().split('T')[0];
     const bcsVal = parseInt(document.getElementById('weightFormBcs').value) || 5;
     const notesVal = document.getElementById('weightFormNotes').value.trim();
+    const id = document.getElementById('weightFormId').value || 'wt-' + Date.now();
 
     const newEntry = {
-      id: 'wt-' + Date.now(),
+      id,
       date: dateVal,
       weight: wtVal,
       bcs: bcsVal,
@@ -8664,31 +9460,62 @@ const app = {
       }
     }
 
-    pet.weight.unshift(newEntry);
+    const idx = pet.weight.findIndex(w => w.id === id);
+    if (idx >= 0) pet.weight[idx] = newEntry;
+    else pet.weight.unshift(newEntry);
+
     pet.weight.sort((a, b) => new Date(b.date) - new Date(a.date));
     pet.currentWeight = pet.weight[0].weight;
 
     this.saveState(true);
     this.closeModal('modalWeight');
-    this.showToast(`Logged weight for ${pet.name}: ${this.formatWeight(wtVal)}`, 'success');
+    this.showToast(`Saved weight for ${pet.name}: ${this.formatWeight(wtVal)}`, 'success');
   },
 
   deleteWeight(petId, id) {
     const pet = this.getPet(petId);
     if (!pet || !Array.isArray(pet.weight)) return;
-    pet.weight = pet.weight.filter(w => w.id !== id);
-    if (pet.weight.length > 0) {
-      pet.currentWeight = pet.weight[0].weight;
-    } else {
-      pet.currentWeight = null;
+    this.openConfirmModal('Delete Weight Entry?', 'Remove this weight record from history?', () => {
+      pet.weight = pet.weight.filter(w => w.id !== id);
+      if (pet.weight.length > 0) {
+        pet.currentWeight = pet.weight[0].weight;
+      } else {
+        pet.currentWeight = null;
+      }
+      this.saveState(true);
+      this.showToast('Weight entry removed', 'info');
+    });
+  },
+
+  editWeight(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !Array.isArray(pet.weight)) return;
+    const entry = pet.weight.find(w => w.id === id);
+    if (!entry) return;
+
+    this.openWeightModal();
+    document.getElementById('weightFormId').value = entry.id;
+    document.getElementById('weightFormPet').value = petId;
+    document.getElementById('weightFormDate').value = entry.date || '';
+
+    const isImperial = this.state.settings && this.state.settings.unitSystem === 'imperial';
+    document.getElementById('weightFormValue').value = isImperial ? (entry.weight * 2.20462).toFixed(1) : entry.weight;
+    if (entry.goal !== undefined && entry.goal !== null) {
+      document.getElementById('weightFormGoal').value = isImperial ? (entry.goal * 2.20462).toFixed(1) : entry.goal;
     }
-    this.saveState(true);
-    this.showToast('Weight entry removed', 'info');
+    document.getElementById('weightFormBcs').value = entry.bcs || 5;
+    document.getElementById('weightFormNotes').value = entry.notes || '';
+
+    const titleEl = document.getElementById('modalWeightTitle');
+    if (titleEl) titleEl.textContent = 'Edit Weight Record';
   },
 
   // Nutrition Modal
   openNutritionModal() {
     document.getElementById('formNutrition').reset();
+    document.getElementById('nutritionFormId').value = '';
+    const titleEl = document.getElementById('modalNutritionTitle');
+    if (titleEl) titleEl.textContent = 'Add Nutrition & Feeding Plan';
     this.openModal('modalNutrition');
   },
 
@@ -8698,8 +9525,9 @@ const app = {
     const pet = this.getPet(petId);
     if (!pet) return;
 
+    const id = document.getElementById('nutritionFormId').value || 'nut-' + Date.now();
     const newPlan = {
-      id: 'nut-' + Date.now(),
+      id,
       brand: document.getElementById('nutritionFormBrand').value,
       type: document.getElementById('nutritionFormType').value,
       portion: document.getElementById('nutritionFormPortion').value,
@@ -8709,7 +9537,9 @@ const app = {
     };
 
     if (!pet.nutrition) pet.nutrition = [];
-    pet.nutrition.unshift(newPlan);
+    const idx = pet.nutrition.findIndex(n => n.id === id);
+    if (idx >= 0) pet.nutrition[idx] = newPlan;
+    else pet.nutrition.unshift(newPlan);
 
     this.saveState(true);
     this.closeModal('modalNutrition');
@@ -8719,14 +9549,39 @@ const app = {
   deleteNutrition(petId, id) {
     const pet = this.getPet(petId);
     if (!pet) return;
-    pet.nutrition = pet.nutrition.filter(n => n.id !== id);
-    this.saveState(true);
-    this.showToast('Nutrition plan removed', 'info');
+    this.openConfirmModal('Delete Nutrition Plan?', 'Remove this dietary feeding plan?', () => {
+      pet.nutrition = pet.nutrition.filter(n => n.id !== id);
+      this.saveState(true);
+      this.showToast('Nutrition plan removed', 'info');
+    });
+  },
+
+  editNutrition(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.nutrition) return;
+    const n = pet.nutrition.find(x => x.id === id);
+    if (!n) return;
+
+    document.getElementById('nutritionFormId').value = n.id;
+    document.getElementById('nutritionFormPet').value = petId;
+    document.getElementById('nutritionFormBrand').value = n.brand || '';
+    document.getElementById('nutritionFormType').value = n.type || 'Dry Kibble';
+    document.getElementById('nutritionFormPortion').value = n.portion || '';
+    document.getElementById('nutritionFormSupplements').value = n.supplements || '';
+    document.getElementById('nutritionFormRestrictions').value = n.restrictions || '';
+    document.getElementById('nutritionFormNotes').value = n.notes || '';
+
+    const titleEl = document.getElementById('modalNutritionTitle');
+    if (titleEl) titleEl.textContent = 'Edit Nutrition & Feeding Plan';
+    this.openModal('modalNutrition');
   },
 
   // Activity Modal
   openActivityModal() {
     document.getElementById('formActivity').reset();
+    document.getElementById('activityFormId').value = '';
+    const titleEl = document.getElementById('modalActivityTitle');
+    if (titleEl) titleEl.textContent = 'Log Activity & Exercise';
     document.getElementById('activityFormDate').value = new Date().toISOString().split('T')[0];
     this.openModal('modalActivity');
   },
@@ -8742,8 +9597,9 @@ const app = {
       dist = parseFloat((dist * 1.60934).toFixed(2));
     }
 
+    const id = document.getElementById('activityFormId').value || 'act-' + Date.now();
     const log = {
-      id: 'act-' + Date.now(),
+      id,
       date: document.getElementById('activityFormDate').value,
       type: document.getElementById('activityFormType').value,
       duration: parseInt(document.getElementById('activityFormDuration').value) || 30,
@@ -8753,7 +9609,9 @@ const app = {
     };
 
     if (!pet.activity) pet.activity = [];
-    pet.activity.unshift(log);
+    const idx = pet.activity.findIndex(a => a.id === id);
+    if (idx >= 0) pet.activity[idx] = log;
+    else pet.activity.unshift(log);
 
     this.saveState(true);
     this.closeModal('modalActivity');
@@ -8763,14 +9621,41 @@ const app = {
   deleteActivity(petId, id) {
     const pet = this.getPet(petId);
     if (!pet) return;
-    pet.activity = pet.activity.filter(a => a.id !== id);
-    this.saveState(true);
-    this.showToast('Activity log deleted', 'info');
+    this.openConfirmModal('Delete Activity Log?', 'Permanently remove this exercise session?', () => {
+      pet.activity = pet.activity.filter(a => a.id !== id);
+      this.saveState(true);
+      this.showToast('Activity log deleted', 'info');
+    });
+  },
+
+  editActivity(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.activity) return;
+    const a = pet.activity.find(x => x.id === id);
+    if (!a) return;
+
+    document.getElementById('activityFormId').value = a.id;
+    document.getElementById('activityFormPet').value = petId;
+    document.getElementById('activityFormDate').value = a.date || '';
+    document.getElementById('activityFormType').value = a.type || 'Daily Walk';
+    document.getElementById('activityFormDuration').value = a.duration || 30;
+
+    const isImperial = this.state.settings && this.state.settings.unitSystem === 'imperial';
+    document.getElementById('activityFormDistance').value = a.distance ? (isImperial ? (a.distance / 1.60934).toFixed(1) : a.distance) : '';
+    document.getElementById('activityFormIntensity').value = a.intensity || 'Moderate';
+    document.getElementById('activityFormNotes').value = a.notes || '';
+
+    const titleEl = document.getElementById('modalActivityTitle');
+    if (titleEl) titleEl.textContent = 'Edit Activity & Exercise';
+    this.openModal('modalActivity');
   },
 
   // Grooming Modal
   openGroomingModal() {
     document.getElementById('formGrooming').reset();
+    document.getElementById('groomingFormId').value = '';
+    const titleEl = document.getElementById('modalGroomingTitle');
+    if (titleEl) titleEl.textContent = 'Record Grooming Session';
     document.getElementById('groomingFormDate').value = new Date().toISOString().split('T')[0];
     this.openModal('modalGrooming');
   },
@@ -8781,8 +9666,9 @@ const app = {
     const pet = this.getPet(petId);
     if (!pet) return;
 
+    const id = document.getElementById('groomingFormId').value || 'grm-' + Date.now();
     const newGrm = {
-      id: 'grm-' + Date.now(),
+      id,
       date: document.getElementById('groomingFormDate').value,
       service: document.getElementById('groomingFormService').value,
       cost: parseFloat(document.getElementById('groomingFormCost').value) || 0,
@@ -8792,7 +9678,9 @@ const app = {
     };
 
     if (!pet.grooming) pet.grooming = [];
-    pet.grooming.unshift(newGrm);
+    const idx = pet.grooming.findIndex(g => g.id === id);
+    if (idx >= 0) pet.grooming[idx] = newGrm;
+    else pet.grooming.unshift(newGrm);
 
     this.saveState(true);
     this.closeModal('modalGrooming');
@@ -8802,15 +9690,39 @@ const app = {
   deleteGrooming(petId, id) {
     const pet = this.getPet(petId);
     if (!pet) return;
-    pet.grooming = pet.grooming.filter(g => g.id !== id);
-    this.saveState(true);
-    this.showToast('Grooming record removed', 'info');
+    this.openConfirmModal('Delete Grooming Record?', 'Remove this grooming session?', () => {
+      pet.grooming = pet.grooming.filter(g => g.id !== id);
+      this.saveState(true);
+      this.showToast('Grooming record removed', 'info');
+    });
+  },
+
+  editGrooming(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.grooming) return;
+    const g = pet.grooming.find(x => x.id === id);
+    if (!g) return;
+
+    document.getElementById('groomingFormId').value = g.id;
+    document.getElementById('groomingFormPet').value = petId;
+    document.getElementById('groomingFormDate').value = g.date || '';
+    document.getElementById('groomingFormService').value = g.service || 'Full Groom & Bath';
+    document.getElementById('groomingFormCost').value = g.cost !== undefined ? g.cost : '';
+    document.getElementById('groomingFormProvider').value = g.provider || '';
+    document.getElementById('groomingFormNextDue').value = g.nextDue || '';
+    document.getElementById('groomingFormNotes').value = g.notes || '';
+
+    const titleEl = document.getElementById('modalGroomingTitle');
+    if (titleEl) titleEl.textContent = 'Edit Grooming Session';
+    this.openModal('modalGrooming');
   },
 
   // Appointment Modal
   openAppointmentModal() {
     document.getElementById('formAppointment').reset();
     document.getElementById('apptFormId').value = '';
+    const titleEl = document.getElementById('modalApptTitle');
+    if (titleEl) titleEl.textContent = 'Schedule Appointment';
     document.getElementById('apptFormDate').value = new Date().toISOString().split('T')[0];
     this.openModal('modalAppointment');
   },
@@ -8821,8 +9733,9 @@ const app = {
     const pet = this.getPet(petId);
     if (!pet) return;
 
+    const id = document.getElementById('apptFormId').value || 'apt-' + Date.now();
     const newAppt = {
-      id: 'apt-' + Date.now(),
+      id,
       date: document.getElementById('apptFormDate').value,
       time: document.getElementById('apptFormTime').value,
       type: document.getElementById('apptFormType').value,
@@ -8833,24 +9746,51 @@ const app = {
     };
 
     if (!pet.appointments) pet.appointments = [];
-    pet.appointments.unshift(newAppt);
+    const idx = pet.appointments.findIndex(a => a.id === id);
+    if (idx >= 0) pet.appointments[idx] = { ...pet.appointments[idx], ...newAppt };
+    else pet.appointments.unshift(newAppt);
 
     this.saveState(true);
     this.closeModal('modalAppointment');
-    this.showToast('Appointment scheduled', 'success');
+    this.showToast('Appointment saved', 'success');
   },
 
   deleteAppointment(petId, id) {
     const pet = this.getPet(petId);
     if (!pet) return;
-    pet.appointments = pet.appointments.filter(a => a.id !== id);
-    this.saveState(true);
-    this.showToast('Appointment removed', 'info');
+    this.openConfirmModal('Cancel/Delete Appointment?', 'Remove this veterinary appointment?', () => {
+      pet.appointments = pet.appointments.filter(a => a.id !== id);
+      this.saveState(true);
+      this.showToast('Appointment removed', 'info');
+    });
+  },
+
+  editAppointment(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.appointments) return;
+    const a = pet.appointments.find(x => x.id === id);
+    if (!a) return;
+
+    document.getElementById('apptFormId').value = a.id;
+    document.getElementById('apptFormPet').value = petId;
+    document.getElementById('apptFormDate').value = a.date || '';
+    document.getElementById('apptFormTime').value = a.time || '';
+    document.getElementById('apptFormType').value = a.type || 'Routine Checkup';
+    document.getElementById('apptFormClinic').value = a.clinic || '';
+    document.getElementById('apptFormCost').value = a.cost !== undefined ? a.cost : '';
+    document.getElementById('apptFormReason').value = a.reason || '';
+
+    const titleEl = document.getElementById('modalApptTitle');
+    if (titleEl) titleEl.textContent = 'Edit Appointment';
+    this.openModal('modalAppointment');
   },
 
   // Reminder Modal
   openReminderModal() {
     document.getElementById('formReminder').reset();
+    document.getElementById('reminderFormId').value = '';
+    const titleEl = document.getElementById('modalReminderTitle');
+    if (titleEl) titleEl.textContent = 'Create Smart Reminder';
     document.getElementById('reminderFormDate').value = new Date().toISOString().split('T')[0];
     this.openModal('modalReminder');
   },
@@ -8861,8 +9801,9 @@ const app = {
     const pet = this.getPet(petId);
     if (!pet) return;
 
+    const id = document.getElementById('reminderFormId').value || 'rem-' + Date.now();
     const newRem = {
-      id: 'rem-' + Date.now(),
+      id,
       title: document.getElementById('reminderFormTitle').value,
       date: document.getElementById('reminderFormDate').value,
       category: document.getElementById('reminderFormCategory').value,
@@ -8871,7 +9812,9 @@ const app = {
     };
 
     if (!pet.reminders) pet.reminders = [];
-    pet.reminders.unshift(newRem);
+    const idx = pet.reminders.findIndex(r => r.id === id);
+    if (idx >= 0) pet.reminders[idx] = { ...pet.reminders[idx], ...newRem };
+    else pet.reminders.unshift(newRem);
 
     this.saveState(true);
     this.closeModal('modalReminder');
@@ -8881,14 +9824,38 @@ const app = {
   deleteReminder(petId, id) {
     const pet = this.getPet(petId);
     if (!pet) return;
-    pet.reminders = pet.reminders.filter(r => r.id !== id);
-    this.saveState(true);
-    this.showToast('Reminder removed', 'info');
+    this.openConfirmModal('Delete Reminder?', 'Remove this reminder notification?', () => {
+      pet.reminders = pet.reminders.filter(r => r.id !== id);
+      this.saveState(true);
+      this.showToast('Reminder removed', 'info');
+    });
+  },
+
+  editReminder(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.reminders) return;
+    const r = pet.reminders.find(x => x.id === id);
+    if (!r) return;
+
+    document.getElementById('reminderFormId').value = r.id;
+    document.getElementById('reminderFormPet').value = petId;
+    document.getElementById('reminderFormTitle').value = r.title || '';
+    document.getElementById('reminderFormDate').value = r.date || '';
+    document.getElementById('reminderFormCategory').value = r.category || 'Medication';
+    document.getElementById('reminderFormPriority').value = r.priority || 'Normal';
+    document.getElementById('reminderFormNotes').value = r.notes || '';
+
+    const titleEl = document.getElementById('modalReminderTitle');
+    if (titleEl) titleEl.textContent = 'Edit Reminder';
+    this.openModal('modalReminder');
   },
 
   // Expense Modal
   openExpenseModal() {
     document.getElementById('formExpense').reset();
+    document.getElementById('expenseFormId').value = '';
+    const titleEl = document.getElementById('modalExpenseTitle');
+    if (titleEl) titleEl.textContent = 'Record Pet Expense';
     document.getElementById('expenseFormDate').value = new Date().toISOString().split('T')[0];
     this.openModal('modalExpense');
   },
@@ -8899,8 +9866,9 @@ const app = {
     const pet = this.getPet(petId);
     if (!pet) return;
 
+    const id = document.getElementById('expenseFormId').value || 'exp-' + Date.now();
     const newExp = {
-      id: 'exp-' + Date.now(),
+      id,
       date: document.getElementById('expenseFormDate').value,
       category: document.getElementById('expenseFormCategory').value,
       amount: parseFloat(document.getElementById('expenseFormAmount').value) || 0,
@@ -8909,7 +9877,9 @@ const app = {
     };
 
     if (!pet.expenses) pet.expenses = [];
-    pet.expenses.unshift(newExp);
+    const idx = pet.expenses.findIndex(e => e.id === id);
+    if (idx >= 0) pet.expenses[idx] = newExp;
+    else pet.expenses.unshift(newExp);
 
     this.saveState(true);
     this.closeModal('modalExpense');
@@ -8919,14 +9889,40 @@ const app = {
   deleteExpense(petId, id) {
     const pet = this.getPet(petId);
     if (!pet) return;
-    pet.expenses = pet.expenses.filter(e => e.id !== id);
-    this.saveState(true);
-    this.showToast('Expense deleted', 'info');
+    this.openConfirmModal('Delete Expense?', 'Remove this recorded financial expense?', () => {
+      pet.expenses = pet.expenses.filter(e => e.id !== id);
+      this.saveState(true);
+      this.showToast('Expense deleted', 'info');
+    });
+  },
+
+  editExpense(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.expenses) return;
+    const e = pet.expenses.find(x => x.id === id);
+    if (!e) return;
+
+    document.getElementById('expenseFormId').value = e.id;
+    document.getElementById('expenseFormPet').value = petId;
+    document.getElementById('expenseFormDate').value = e.date || '';
+    document.getElementById('expenseFormCategory').value = e.category || 'Veterinary';
+    document.getElementById('expenseFormAmount').value = e.amount !== undefined ? e.amount : '';
+    document.getElementById('expenseFormDesc').value = e.desc || '';
+    document.getElementById('expenseFormVendor').value = e.vendor || '';
+
+    const titleEl = document.getElementById('modalExpenseTitle');
+    if (titleEl) titleEl.textContent = 'Edit Pet Expense';
+    this.openModal('modalExpense');
   },
 
   // Document Modal
   openDocumentModal() {
     document.getElementById('formDocument').reset();
+    document.getElementById('docFormId').value = '';
+    const fileInput = document.getElementById('docFormFile');
+    if (fileInput) fileInput.required = true;
+    const titleEl = document.getElementById('modalDocTitle');
+    if (titleEl) titleEl.textContent = 'Upload Pet Document';
     this.openModal('modalDocument');
   },
 
@@ -8944,16 +9940,30 @@ const app = {
     const pet = this.getPet(petId);
     if (!pet) return;
 
-    const newDoc = {
-      id: 'doc-' + Date.now(),
-      title: document.getElementById('docFormTitle').value,
-      category: document.getElementById('docFormCategory').value,
-      date: new Date().toISOString().split('T')[0],
-      notes: document.getElementById('docFormNotes').value
-    };
+    const id = document.getElementById('docFormId').value || 'doc-' + Date.now();
+    const title = document.getElementById('docFormTitle').value;
+    const category = document.getElementById('docFormCategory').value;
+    const notes = document.getElementById('docFormNotes').value;
 
     if (!pet.documents) pet.documents = [];
-    pet.documents.unshift(newDoc);
+    const idx = pet.documents.findIndex(d => d.id === id);
+    if (idx >= 0) {
+      pet.documents[idx] = {
+        ...pet.documents[idx],
+        title,
+        category,
+        notes
+      };
+    } else {
+      const newDoc = {
+        id,
+        title,
+        category,
+        date: new Date().toISOString().split('T')[0],
+        notes
+      };
+      pet.documents.unshift(newDoc);
+    }
 
     this.saveState(true);
     this.closeModal('modalDocument');
@@ -8963,9 +9973,678 @@ const app = {
   deleteDocument(petId, id) {
     const pet = this.getPet(petId);
     if (!pet) return;
-    pet.documents = pet.documents.filter(d => d.id !== id);
-    this.saveState(true);
-    this.showToast('Document removed', 'info');
+    this.openConfirmModal('Delete Document?', 'Permanently delete this pet document?', () => {
+      pet.documents = pet.documents.filter(d => d.id !== id);
+      this.saveState(true);
+      this.showToast('Document removed', 'info');
+    });
+  },
+
+  editDocument(petId, id) {
+    const pet = this.getPet(petId);
+    if (!pet || !pet.documents) return;
+    const d = pet.documents.find(x => x.id === id);
+    if (!d) return;
+
+    document.getElementById('docFormId').value = d.id;
+    document.getElementById('docFormPet').value = petId;
+    document.getElementById('docFormTitle').value = d.title || '';
+    document.getElementById('docFormCategory').value = d.category || 'Vaccination Certificate';
+    document.getElementById('docFormNotes').value = d.notes || '';
+
+    const fileInput = document.getElementById('docFormFile');
+    if (fileInput) fileInput.required = false;
+
+    const titleEl = document.getElementById('modalDocTitle');
+    if (titleEl) titleEl.textContent = 'Edit Pet Document';
+    this.openModal('modalDocument');
+  },
+
+  // ==================== RESPONSIVE ENTRY DETAIL POPUP ENGINE ====================
+  findEntryInPet(category, pet, id) {
+    if (!pet || !id) return null;
+    const cat = (category || '').toLowerCase();
+    switch (cat) {
+      case 'health':
+        return (pet.healthRecords || []).find(r => r.id === id);
+      case 'medication':
+        return (pet.medications || []).find(m => m.id === id);
+      case 'vaccine':
+      case 'vaccination':
+        return (pet.vaccinations || []).find(v => v.id === id);
+      case 'preventive':
+        return (pet.preventiveCare || []).find(p => p.id === id);
+      case 'wellness':
+        return (pet.wellness || []).find(w => w.id === id);
+      case 'weight':
+        return (Array.isArray(pet.weight) ? pet.weight : []).find(w => w.id === id);
+      case 'nutrition':
+        return (pet.nutrition || []).find(n => n.id === id);
+      case 'activity':
+        return (pet.activity || []).find(a => a.id === id);
+      case 'grooming':
+        return (pet.grooming || []).find(g => g.id === id);
+      case 'appointment':
+        return (pet.appointments || []).find(a => a.id === id);
+      case 'reminder':
+        return (pet.reminders || []).find(r => r.id === id);
+      case 'expense':
+        return (pet.expenses || []).find(e => e.id === id);
+      case 'document':
+        return (pet.documents || []).find(d => d.id === id);
+      default:
+        const cols = ['healthRecords', 'medications', 'vaccinations', 'preventiveCare', 'wellness', 'weight', 'nutrition', 'activity', 'grooming', 'appointments', 'reminders', 'expenses', 'documents'];
+        for (const col of cols) {
+          if (Array.isArray(pet[col])) {
+            const found = pet[col].find(x => x && x.id === id);
+            if (found) return found;
+          }
+        }
+        return null;
+    }
+  },
+
+  showEntryDetail(category, petId, id) {
+    let pet = this.getPet(petId);
+    let item = null;
+    let resolvedCategory = category ? category.toLowerCase() : '';
+
+    if (pet) {
+      item = this.findEntryInPet(resolvedCategory, pet, id);
+    }
+    if (!item) {
+      // Look across all pets if not found with specific petId
+      for (const p of this.state.pets) {
+        const found = this.findEntryInPet(resolvedCategory, p, id);
+        if (found) {
+          pet = p;
+          petId = p.id;
+          item = found;
+          break;
+        }
+      }
+    }
+
+    if (!item) {
+      this.showToast('Entry record not found', 'warning');
+      return;
+    }
+
+    // Modal Title & Icon
+    const modalTitleEl = document.getElementById('entryDetailTitle');
+    const bodyEl = document.getElementById('entryDetailBody');
+    const editBtn = document.getElementById('entryDetailEditBtn');
+    const deleteBtn = document.getElementById('entryDetailDeleteBtn');
+
+    const catLabels = {
+      health: 'Medical Clinical Record',
+      medication: 'Medication Prescription',
+      vaccine: 'Vaccination Record',
+      vaccination: 'Vaccination Record',
+      preventive: 'Preventive Care Schedule',
+      wellness: 'Daily Wellness Check-in',
+      weight: 'Weight & Body Condition',
+      nutrition: 'Dietary Nutrition Plan',
+      activity: 'Exercise & Activity Log',
+      grooming: 'Grooming Session Record',
+      appointment: 'Veterinary Appointment',
+      reminder: 'Scheduled Smart Reminder',
+      expense: 'Pet Care Expense',
+      document: 'Vault Document Record'
+    };
+
+    const categoryTitle = catLabels[resolvedCategory] || 'Entry Details';
+    if (modalTitleEl) {
+      modalTitleEl.innerHTML = `
+        <svg width="20" height="20" style="color:var(--primary);"><use href="#icon-info"/></svg>
+        <span>${categoryTitle}</span>
+      `;
+    }
+
+    // Configure Footer Buttons
+    if (editBtn) {
+      editBtn.style.display = item.isAuto ? 'none' : 'inline-flex';
+      editBtn.onclick = () => this.editEntryFromDetail(resolvedCategory, petId, id);
+    }
+    if (deleteBtn) {
+      deleteBtn.style.display = item.isAuto ? 'none' : 'inline-flex';
+      deleteBtn.onclick = () => this.deleteEntryFromDetail(resolvedCategory, petId, id);
+    }
+
+    // Build Detail Markup
+    const petPhoto = this.getPetPhoto(pet);
+    const petBreed = pet ? `${pet.species || 'Pet'} • ${pet.breed || 'Mixed'} • ${pet.gender || ''}` : 'General Pet';
+    let primaryTitle = '';
+    let subtitle = '';
+    let fieldsHtml = '';
+    let notesHtml = '';
+
+    switch (resolvedCategory) {
+      case 'health':
+        primaryTitle = item.diagnosis || item.type || 'Clinical Health Record';
+        subtitle = `Visit Type: ${item.type || 'Veterinary Visit'}`;
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Examination Date</div>
+            <div class="entry-detail-value">${item.date || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Attending Veterinarian</div>
+            <div class="entry-detail-value">${item.vet || '--'}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Observed Symptoms</div>
+            <div class="entry-detail-value">${item.symptoms || 'None reported'}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Prescribed Treatment / Plan</div>
+            <div class="entry-detail-value">${item.treatment || 'Routine observation'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Clinical Cost</div>
+            <div class="entry-detail-value" style="font-weight:700; color:var(--primary);">${this.formatCurrency(item.cost || 0)}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Follow-up Recommendation</div>
+            <div class="entry-detail-value">${item.followUp || 'As needed'}</div>
+          </div>
+        `;
+        break;
+
+      case 'medication':
+        primaryTitle = item.name || 'Prescription Medication';
+        subtitle = `Dosage: ${item.dosage || '--'} • ${item.frequency || 'Daily'}`;
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Status</div>
+            <div class="entry-detail-value"><span class="badge ${item.status === 'Active' ? 'badge-success' : 'badge-neutral'}">${item.status || 'Active'}</span></div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Route / Administration</div>
+            <div class="entry-detail-value">${item.route || 'Oral'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Scheduled Times</div>
+            <div class="entry-detail-value">${item.times || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Remaining Doses</div>
+            <div class="entry-detail-value" style="font-weight:700;">${item.remainingDoses !== undefined ? item.remainingDoses : '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Start Date</div>
+            <div class="entry-detail-value">${item.startDate || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">End / Duration</div>
+            <div class="entry-detail-value">${item.endDate || 'Ongoing / Indefinite'}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Pharmacy Refill Target</div>
+            <div class="entry-detail-value">${item.refillDate || 'No refill scheduled'}</div>
+          </div>
+        `;
+        if (item.instructions) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Instructions:</strong> ${item.instructions}</div>`;
+        }
+        break;
+
+      case 'vaccine':
+      case 'vaccination':
+        primaryTitle = item.name || 'Vaccination';
+        subtitle = `Administered: ${item.adminDate || '--'}`;
+        const isVacOverdue = item.dueDate && new Date(item.dueDate) < new Date();
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Administered Date</div>
+            <div class="entry-detail-value">${item.adminDate || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Next Due / Expiration</div>
+            <div class="entry-detail-value">
+              ${item.dueDate ? `<span class="badge ${isVacOverdue ? 'badge-danger' : 'badge-success'}">${item.dueDate} ${isVacOverdue ? '(Overdue)' : ''}</span>` : '--'}
+            </div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Lot / Batch Number</div>
+            <div class="entry-detail-value" style="font-family:monospace;">${item.lotNumber || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Certificate / Tag #</div>
+            <div class="entry-detail-value" style="font-family:monospace;">${item.certNumber || '--'}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Administering Clinic / Vet</div>
+            <div class="entry-detail-value">${item.vet || '--'}</div>
+          </div>
+        `;
+        if (item.notes) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Notes:</strong> ${item.notes}</div>`;
+        }
+        break;
+
+      case 'preventive':
+        primaryTitle = item.name || item.category || 'Preventive Treatment';
+        subtitle = `Category: ${item.category || 'Routine Care'}`;
+        const isPrevOverdue = item.nextDue && new Date(item.nextDue) < new Date();
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Schedule Frequency</div>
+            <div class="entry-detail-value">${item.frequency || 'Monthly'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Last Administered</div>
+            <div class="entry-detail-value">${item.lastCompleted || '--'}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Next Treatment Due</div>
+            <div class="entry-detail-value">
+              ${item.nextDue ? `<span class="badge ${isPrevOverdue ? 'badge-danger' : 'badge-success'}">${item.nextDue} ${isPrevOverdue ? '(Due Now)' : ''}</span>` : '--'}
+            </div>
+          </div>
+        `;
+        if (item.notes) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Notes:</strong> ${item.notes}</div>`;
+        }
+        break;
+
+      case 'wellness':
+        primaryTitle = `Daily Wellness: ${item.score || 0}% Score`;
+        subtitle = `Check-in Date: ${item.date || '--'}`;
+        const levelText = val => val >= 4 ? 'Optimal' : val === 3 ? 'Moderate' : 'Low / Concerns';
+        const symptomTags = [];
+        if (item.pain) symptomTags.push('<span class="badge badge-danger">Pain / Limping</span>');
+        if (item.vomiting) symptomTags.push('<span class="badge badge-danger">Vomiting</span>');
+        if (item.coughing) symptomTags.push('<span class="badge badge-warning">Coughing / Sneezing</span>');
+        if (item.scratching) symptomTags.push('<span class="badge badge-warning">Excess Scratching</span>');
+        if (symptomTags.length === 0) symptomTags.push('<span class="badge badge-success">No Abnormal Symptoms</span>');
+
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Appetite</div>
+            <div class="entry-detail-value">${item.appetite || 4}/5 (${levelText(item.appetite || 4)})</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Hydration / Water</div>
+            <div class="entry-detail-value">${item.water || 4}/5 (${levelText(item.water || 4)})</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Energy / Mood</div>
+            <div class="entry-detail-value">${item.energy || 4}/5 (${levelText(item.energy || 4)})</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Digestion / Stool</div>
+            <div class="entry-detail-value">${item.digestion || 4}/5 (${levelText(item.digestion || 4)})</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Clinical Symptom Flags</div>
+            <div class="entry-detail-value" style="display:flex; gap:6px; flex-wrap:wrap; margin-top:4px;">
+              ${symptomTags.join(' ')}
+            </div>
+          </div>
+        `;
+        if (item.notes) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Observations:</strong> ${item.notes}</div>`;
+        }
+        break;
+
+      case 'weight':
+        primaryTitle = this.formatWeight(item.weight);
+        subtitle = `Recorded on ${item.date || '--'}`;
+        const bcsDescriptions = {
+          1: 'Severely Underweight (1/9)',
+          2: 'Very Underweight (2/9)',
+          3: 'Underweight (3/9)',
+          4: 'Lean / Fit (4/9)',
+          5: 'Ideal Body Condition (5/9)',
+          6: 'Mildly Overweight (6/9)',
+          7: 'Overweight (7/9)',
+          8: 'Heavy (8/9)',
+          9: 'Obese (9/9)'
+        };
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Body Condition Score (BCS)</div>
+            <div class="entry-detail-value">${bcsDescriptions[item.bcs] || `Score ${item.bcs || 5}/9`}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Target Goal Weight</div>
+            <div class="entry-detail-value" style="font-weight:700;">${item.goal ? this.formatWeight(item.goal) : '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Scale Assessment</div>
+            <div class="entry-detail-value">
+              ${item.goal ? (Math.abs(item.weight - item.goal) < 0.3 ? '<span class="badge badge-success">At Target Goal</span>' : item.weight > item.goal ? '<span class="badge badge-warning">Above Goal Weight</span>' : '<span class="badge badge-info">Below Goal Weight</span>') : 'Regular Check'}
+            </div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Measurement Date</div>
+            <div class="entry-detail-value">${item.date || '--'}</div>
+          </div>
+        `;
+        if (item.notes) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Notes:</strong> ${item.notes}</div>`;
+        }
+        break;
+
+      case 'nutrition':
+        primaryTitle = item.brand || 'Dietary Feeding Plan';
+        subtitle = `Type: ${item.type || 'Commercial Diet'}`;
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Daily Portion Size</div>
+            <div class="entry-detail-value" style="font-weight:700;">${item.portion || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Formula / Food Type</div>
+            <div class="entry-detail-value">${item.type || '--'}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Supplements / Vitamins</div>
+            <div class="entry-detail-value">${item.supplements || 'None prescribed'}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Allergies & Dietary Restrictions</div>
+            <div class="entry-detail-value" style="color:var(--danger); font-weight:600;">${item.restrictions || 'None registered'}</div>
+          </div>
+        `;
+        if (item.notes) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Feeding Notes:</strong> ${item.notes}</div>`;
+        }
+        break;
+
+      case 'activity':
+        primaryTitle = item.type || 'Exercise Session';
+        subtitle = `${item.duration || 30} minutes • ${item.intensity || 'Moderate'} Intensity`;
+        const estCalories = Math.round((item.duration || 30) * ((item.intensity === 'High' ? 8 : item.intensity === 'Light' ? 4 : 6)));
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Session Date</div>
+            <div class="entry-detail-value">${item.date || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Duration</div>
+            <div class="entry-detail-value" style="font-weight:700;">${item.duration || 0} mins</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Distance Covered</div>
+            <div class="entry-detail-value">${item.distance ? this.formatDistance(item.distance) : '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Intensity Level</div>
+            <div class="entry-detail-value"><span class="badge ${item.intensity === 'High' ? 'badge-danger' : item.intensity === 'Light' ? 'badge-neutral' : 'badge-primary'}">${item.intensity || 'Moderate'}</span></div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Estimated Energy Expenditure</div>
+            <div class="entry-detail-value" style="color:var(--success); font-weight:700;">~${estCalories} kcal</div>
+          </div>
+        `;
+        if (item.notes) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Activity Notes:</strong> ${item.notes}</div>`;
+        }
+        break;
+
+      case 'grooming':
+        primaryTitle = item.service || 'Grooming Session';
+        subtitle = `Date: ${item.date || '--'}`;
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Service Fee / Cost</div>
+            <div class="entry-detail-value" style="font-weight:700; color:var(--primary);">${this.formatCurrency(item.cost || 0)}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Salon / Groomer</div>
+            <div class="entry-detail-value">${item.provider || 'Self / Home Care'}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Next Recommended Session</div>
+            <div class="entry-detail-value">${item.nextDue ? `<span class="badge badge-info">${item.nextDue}</span>` : 'As needed'}</div>
+          </div>
+        `;
+        if (item.notes) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Grooming Remarks:</strong> ${item.notes}</div>`;
+        }
+        break;
+
+      case 'appointment':
+        primaryTitle = item.type || 'Veterinary Appointment';
+        subtitle = `${item.date || '--'} at ${item.time || '10:00 AM'}`;
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Appointment Status</div>
+            <div class="entry-detail-value"><span class="badge ${item.status === 'Upcoming' ? 'badge-primary' : item.status === 'Completed' ? 'badge-success' : 'badge-neutral'}">${item.status || 'Scheduled'}</span></div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Clinic / Hospital</div>
+            <div class="entry-detail-value">${item.clinic || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Scheduled Date & Time</div>
+            <div class="entry-detail-value" style="font-weight:700;">${item.date || '--'} ${item.time || ''}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Estimated / Billed Cost</div>
+            <div class="entry-detail-value">${this.formatCurrency(item.cost || 0)}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Reason for Appointment</div>
+            <div class="entry-detail-value">${item.reason || 'General wellness exam and consultation'}</div>
+          </div>
+        `;
+        break;
+
+      case 'reminder':
+        primaryTitle = item.title || 'Scheduled Reminder';
+        subtitle = `Due: ${item.date || '--'}`;
+        const isRemCompleted = !!item.completed;
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Reminder Category</div>
+            <div class="entry-detail-value">${item.category || 'General'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Priority Level</div>
+            <div class="entry-detail-value"><span class="badge ${item.priority === 'Urgent' ? 'badge-danger' : item.priority === 'High' ? 'badge-warning' : 'badge-neutral'}">${item.priority || 'Normal'}</span></div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Due Date</div>
+            <div class="entry-detail-value" style="font-weight:700;">${item.date || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Current Status</div>
+            <div class="entry-detail-value"><span class="badge ${isRemCompleted ? 'badge-success' : 'badge-warning'}">${isRemCompleted ? 'Completed' : 'Pending Action'}</span></div>
+          </div>
+        `;
+        if (item.notes) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Details:</strong> ${item.notes}</div>`;
+        }
+        break;
+
+      case 'expense':
+        primaryTitle = item.desc || 'Pet Care Expense';
+        subtitle = `${this.formatCurrency(item.amount || 0)} • ${item.category || 'General'}`;
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Total Amount</div>
+            <div class="entry-detail-value" style="font-size:1.2rem; font-weight:800; color:var(--primary);">${this.formatCurrency(item.amount || 0)}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Expense Category</div>
+            <div class="entry-detail-value"><span class="badge badge-primary">${item.category || 'General'}</span></div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Payment Date</div>
+            <div class="entry-detail-value">${item.date || '--'}</div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Vendor / Clinic / Payee</div>
+            <div class="entry-detail-value">${item.vendor || '--'}</div>
+          </div>
+        `;
+        break;
+
+      case 'document':
+        primaryTitle = item.title || 'Document Record';
+        subtitle = `Category: ${item.category || 'General'}`;
+        fieldsHtml = `
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Document Category</div>
+            <div class="entry-detail-value"><span class="badge badge-neutral">${item.category || 'General'}</span></div>
+          </div>
+          <div class="entry-detail-field">
+            <div class="entry-detail-label">Upload / Logged Date</div>
+            <div class="entry-detail-value">${item.date || '--'}</div>
+          </div>
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Storage Status</div>
+            <div class="entry-detail-value" style="color:var(--success);">Stored securely in Pet Vault</div>
+          </div>
+        `;
+        if (item.notes) {
+          notesHtml = `<div class="entry-detail-notes-box"><strong>Description / Remarks:</strong> ${item.notes}</div>`;
+        }
+        break;
+
+      default:
+        primaryTitle = item.title || item.name || item.type || 'Entry Details';
+        subtitle = `Logged in PetCare Pro`;
+        fieldsHtml = `
+          <div class="entry-detail-field" style="grid-column: 1 / -1;">
+            <div class="entry-detail-label">Record Information</div>
+            <div class="entry-detail-value">${JSON.stringify(item)}</div>
+          </div>
+        `;
+    }
+
+    if (bodyEl) {
+      bodyEl.innerHTML = `
+        <div class="entry-detail-header-strip">
+          <div class="entry-detail-pet-info">
+            <img class="entry-detail-pet-avatar" src="${petPhoto}" alt="${pet ? pet.name : 'Pet'}" onerror="this.src=app.getDefaultPetAvatar()">
+            <div>
+              <div class="entry-detail-pet-name">${pet ? pet.name : 'All Pets'}</div>
+              <div class="entry-detail-pet-meta">${petBreed}</div>
+            </div>
+          </div>
+          <div class="entry-detail-cat-badge">${categoryTitle}</div>
+        </div>
+
+        <div style="margin-bottom:18px;">
+          <h2 style="font-size:1.35rem; font-weight:800; color:var(--text-main); margin-bottom:4px; line-height:1.25;">${primaryTitle}</h2>
+          <div style="font-size:0.88rem; color:var(--text-muted);">${subtitle}</div>
+        </div>
+
+        <div class="entry-detail-grid">
+          ${fieldsHtml}
+        </div>
+
+        ${notesHtml}
+      `;
+    }
+
+    this.openModal('modalEntryDetail');
+  },
+
+  editEntryFromDetail(category, petId, id) {
+    this.closeModal('modalEntryDetail');
+    const cat = (category || '').toLowerCase();
+    setTimeout(() => {
+      switch (cat) {
+        case 'health':
+          this.editHealthRecord(petId, id);
+          break;
+        case 'medication':
+          this.editMedication(petId, id);
+          break;
+        case 'vaccine':
+        case 'vaccination':
+          this.editVaccine(petId, id);
+          break;
+        case 'preventive':
+          this.editPreventive(petId, id);
+          break;
+        case 'wellness':
+          this.editWellness(petId, id);
+          break;
+        case 'weight':
+          this.editWeight(petId, id);
+          break;
+        case 'nutrition':
+          this.editNutrition(petId, id);
+          break;
+        case 'activity':
+          this.editActivity(petId, id);
+          break;
+        case 'grooming':
+          this.editGrooming(petId, id);
+          break;
+        case 'appointment':
+          this.editAppointment(petId, id);
+          break;
+        case 'reminder':
+          this.editReminder(petId, id);
+          break;
+        case 'expense':
+          this.editExpense(petId, id);
+          break;
+        case 'document':
+          this.editDocument(petId, id);
+          break;
+        default:
+          this.showToast('Edit handler not configured for category', 'warning');
+      }
+    }, 150);
+  },
+
+  deleteEntryFromDetail(category, petId, id) {
+    this.closeModal('modalEntryDetail');
+    const cat = (category || '').toLowerCase();
+    setTimeout(() => {
+      switch (cat) {
+        case 'health':
+          this.deleteHealthRecord(petId, id);
+          break;
+        case 'medication':
+          this.deleteMedication(petId, id);
+          break;
+        case 'vaccine':
+        case 'vaccination':
+          this.deleteVaccine(petId, id);
+          break;
+        case 'preventive':
+          this.deletePreventive(petId, id);
+          break;
+        case 'wellness':
+          this.deleteWellness(petId, id);
+          break;
+        case 'weight':
+          this.deleteWeight(petId, id);
+          break;
+        case 'nutrition':
+          this.deleteNutrition(petId, id);
+          break;
+        case 'activity':
+          this.deleteActivity(petId, id);
+          break;
+        case 'grooming':
+          this.deleteGrooming(petId, id);
+          break;
+        case 'appointment':
+          this.deleteAppointment(petId, id);
+          break;
+        case 'reminder':
+          this.deleteReminder(petId, id);
+          break;
+        case 'expense':
+          this.deleteExpense(petId, id);
+          break;
+        case 'document':
+          this.deleteDocument(petId, id);
+          break;
+        default:
+          this.showToast('Delete handler not configured for category', 'warning');
+      }
+    }, 150);
   },
 
   // ==================== TOAST NOTIFICATIONS ====================
