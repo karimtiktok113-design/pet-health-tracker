@@ -1647,25 +1647,156 @@
     .toast.warning { border-left: 4px solid var(--warning); }
     .toast.info { border-left: 4px solid var(--info); }
 
-    /* SVG Chart Containers */
+    /* SVG Chart Containers & Enhanced Interactive Elements */
     .chart-container {
       position: relative;
       width: 100%;
       height: 240px;
+      user-select: none;
     }
     .chart-tooltip {
       position: absolute;
-      background: rgba(15, 23, 42, 0.95);
-      border: 1px solid rgba(255, 255, 255, 0.15);
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.18);
       color: #f8fafc;
-      padding: 6px 12px;
-      border-radius: var(--radius-sm);
-      font-size: 0.78rem;
+      padding: 8px 14px;
+      border-radius: var(--radius-md, 10px);
+      font-size: 0.8rem;
       pointer-events: none;
       z-index: 50;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
-      display: none;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5), 0 4px 10px -2px rgba(0, 0, 0, 0.3);
+      opacity: 0;
+      visibility: hidden;
+      transform: translateY(6px);
+      transition: opacity 0.15s ease, transform 0.15s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.15s;
       white-space: nowrap;
+    }
+    .chart-tooltip.visible {
+      opacity: 1;
+      visibility: visible;
+      transform: translateY(0);
+    }
+    .chart-tooltip-header {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: var(--text-muted, #94a3b8);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 3px;
+    }
+    .chart-tooltip-body {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .chart-tooltip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+      flex-shrink: 0;
+      box-shadow: 0 0 6px currentColor;
+    }
+    .chart-tooltip-value {
+      font-weight: 700;
+      font-size: 0.95rem;
+      color: #ffffff;
+      font-family: var(--font-heading, inherit);
+    }
+    .chart-tooltip-badge {
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: rgba(255, 255, 255, 0.12);
+      color: #e2e8f0;
+      margin-left: 4px;
+    }
+    html[data-mode="light"] .chart-tooltip {
+      background: rgba(255, 255, 255, 0.96);
+      border-color: rgba(0, 0, 0, 0.12);
+      color: #0f172a;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.15), 0 4px 10px -2px rgba(0, 0, 0, 0.08);
+    }
+    html[data-mode="light"] .chart-tooltip-value {
+      color: #0f172a;
+    }
+    html[data-mode="light"] .chart-tooltip-header {
+      color: #64748b;
+    }
+    html[data-mode="light"] .chart-tooltip-badge {
+      background: rgba(0, 0, 0, 0.08);
+      color: #334155;
+    }
+    /* Interactive SVG Chart Elements */
+    .chart-svg {
+      width: 100%;
+      height: 100%;
+      overflow: visible;
+      touch-action: pan-y;
+    }
+    .chart-guide-line {
+      stroke: var(--primary, #d4af37);
+      stroke-width: 1.5;
+      stroke-dasharray: 4,3;
+      opacity: 0;
+      transition: opacity 0.15s ease;
+      pointer-events: none;
+    }
+    .chart-guide-line.active {
+      opacity: 0.75;
+    }
+    .chart-dot-halo {
+      transition: opacity 0.15s ease, cx 0.1s ease, cy 0.1s ease;
+      pointer-events: none;
+    }
+    .chart-dot {
+      transition: r 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), stroke-width 0.2s, filter 0.2s;
+      cursor: pointer;
+    }
+    .chart-dot.active, .chart-dot:hover {
+      r: 7;
+      stroke-width: 3;
+      filter: drop-shadow(0 0 6px var(--primary, #d4af37));
+    }
+    .chart-bar-group {
+      cursor: pointer;
+    }
+    .chart-bar {
+      transition: opacity 0.2s ease, filter 0.2s ease, transform 0.2s ease;
+      cursor: pointer;
+    }
+    .chart-svg.has-hover .chart-bar:not(.active) {
+      opacity: 0.45;
+    }
+    .chart-bar.active, .chart-bar:hover {
+      filter: brightness(1.2) drop-shadow(0 -2px 8px var(--primary, #d4af37));
+      opacity: 1 !important;
+    }
+    .chart-donut-slice {
+      cursor: pointer;
+      transition: stroke-width 0.25s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.2s ease, filter 0.2s ease;
+      transform-origin: center;
+    }
+    .chart-svg.has-hover .chart-donut-slice:not(.active) {
+      opacity: 0.45;
+    }
+    .chart-donut-slice.active, .chart-donut-slice:hover {
+      stroke-width: 30px !important;
+      opacity: 1 !important;
+      filter: drop-shadow(0 0 8px currentColor);
+    }
+    .donut-legend-item {
+      cursor: pointer;
+      padding: 4px 8px;
+      border-radius: var(--radius-sm, 6px);
+      transition: background 0.15s ease, transform 0.15s ease;
+    }
+    .donut-legend-item:hover, .donut-legend-item.active {
+      background: var(--bg-card-hover, rgba(255, 255, 255, 0.08));
+      transform: translateX(4px);
     }
 
     /* Floating Action Button for Mobile */
@@ -6522,35 +6653,73 @@ const app = {
 
   renderDashboardCharts() {
     const pets = this.getActivePets();
+    const isImperial = this.state && this.state.settings && this.state.settings.unitSystem === 'imperial';
+    const weightUnit = isImperial ? 'lb' : 'kg';
 
-    // 1. Weight Trend Data
-    let weightPoints = [];
-    if (pets.length === 1 && pets[0].weightHistory && pets[0].weightHistory.length > 0) {
-      weightPoints = pets[0].weightHistory.map(w => ({ label: w.date.substring(5), value: w.weight }));
-    } else if (pets[0] && pets[0].weight && Array.isArray(pets[0].weight)) {
-      weightPoints = pets[0].weight.map(w => ({ label: w.date.substring(5), value: w.weight }));
-    } else {
-      weightPoints = [
-        { label: 'Jan', value: 28.0 }, { label: 'Mar', value: 28.2 },
-        { label: 'May', value: 28.5 }, { label: 'Jul', value: 28.7 }, { label: 'Sep', value: 28.5 }
-      ];
+    // 1. Weight Trend Data: synced with actual records, moving left to right (latest on right)
+    let rawWeights = [];
+    const sourcePet = pets.length === 1 ? pets[0] : (this.state.pets[0] || pets[0]);
+    if (sourcePet && sourcePet.weight && Array.isArray(sourcePet.weight)) {
+      rawWeights = [...sourcePet.weight];
+    } else if (sourcePet && sourcePet.weightHistory && Array.isArray(sourcePet.weightHistory)) {
+      rawWeights = [...sourcePet.weightHistory];
     }
+
+    // Sort ascending by date so time moves chronologically left to right (latest on right)
+    rawWeights.sort((a, b) => new Date(a.date) - new Date(b.date));
+    const wtYears = rawWeights.map(w => w.date ? w.date.substring(0, 4) : '').filter(Boolean);
+    const wtMultiYear = new Set(wtYears).size > 1;
+    let weightPoints = rawWeights.slice(-7).map(w => {
+      const num = Number(w.weight);
+      const val = isImperial ? parseFloat((num * 2.20462).toFixed(1)) : parseFloat(num.toFixed(1));
+      let lbl = 'Entry';
+      if (w.date) {
+        lbl = wtMultiYear ? w.date.substring(2, 7) : w.date.substring(5);
+      }
+      return {
+        label: lbl,
+        value: val
+      };
+    });
+
+    if (weightPoints.length === 0) {
+      if (sourcePet && (sourcePet.currentWeight || sourcePet.weight)) {
+        const wt = Number(sourcePet.currentWeight || sourcePet.weight);
+        const val = isImperial ? parseFloat((wt * 2.20462).toFixed(1)) : parseFloat(wt.toFixed(1));
+        weightPoints = [{ label: 'Current', value: val }];
+      } else {
+        weightPoints = [
+          { label: 'Jan', value: isImperial ? 61.7 : 28.0 },
+          { label: 'Mar', value: isImperial ? 62.2 : 28.2 },
+          { label: 'May', value: isImperial ? 62.8 : 28.5 },
+          { label: 'Jul', value: isImperial ? 63.3 : 28.7 },
+          { label: 'Sep', value: isImperial ? 62.8 : 28.5 }
+        ];
+      }
+    }
+
     this.renderLineChart('dashboardWeightChartContainer', weightPoints, {
       strokeColor: 'var(--primary)',
       gradientId: 'gradWeight',
-      unit: this.state.settings.unitSystem === 'imperial' ? 'lb' : 'kg'
+      unit: weightUnit
     });
 
-    // 2. Wellness Score Data
-    let wellnessPoints = [];
-    const sourcePet = pets[0] || this.state.pets[0];
-    if (sourcePet && sourcePet.wellness && sourcePet.wellness.length > 0) {
-      wellnessPoints = sourcePet.wellness.slice(0, 7).reverse().map(w => ({
-        label: w.date.substring(5),
-        value: w.score
-      }));
+    // 2. Wellness Score Data: synced with active pet wellness check-ins, moving left to right
+    let rawWellness = [];
+    if (pets.length === 1 && pets[0].wellness) {
+      rawWellness = [...pets[0].wellness];
+    } else {
+      pets.forEach(p => {
+        if (p.wellness) p.wellness.forEach(w => rawWellness.push(w));
+      });
     }
-    if (wellnessPoints.length < 2) {
+    // Sort ascending by date so oldest is on the left, latest is on the right
+    rawWellness.sort((a, b) => new Date(a.date) - new Date(b.date));
+    let wellnessPoints = rawWellness.slice(-7).map(w => ({
+      label: w.date ? (w.date.length > 5 ? w.date.substring(5) : w.date) : 'Day',
+      value: Number(w.score)
+    }));
+    if (wellnessPoints.length === 0) {
       wellnessPoints = [
         { label: 'Sep 01', value: 92 }, { label: 'Sep 02', value: 90 },
         { label: 'Sep 03', value: 94 }, { label: 'Sep 04', value: 92 },
@@ -6559,17 +6728,26 @@ const app = {
     }
     this.renderAreaChart('dashboardWellnessChartContainer', wellnessPoints, {
       fillColor: 'rgba(16, 185, 129, 0.25)',
-      strokeColor: 'var(--success)'
+      strokeColor: 'var(--success)',
+      unit: '%'
     });
 
-    // 3. Activity Trend
-    let activityItems = [];
-    if (sourcePet && sourcePet.activity && sourcePet.activity.length > 0) {
-      activityItems = sourcePet.activity.slice(0, 7).map(a => ({
-        label: a.date.substring(5),
-        value: a.duration
-      }));
+    // 3. Activity Trend: synced with active pet exercise duration, moving left to right
+    let rawActivity = [];
+    if (pets.length === 1 && pets[0].activity) {
+      rawActivity = [...pets[0].activity];
     } else {
+      pets.forEach(p => {
+        if (p.activity) p.activity.forEach(a => rawActivity.push(a));
+      });
+    }
+    // Sort ascending by date so oldest is on the left, latest is on the right
+    rawActivity.sort((a, b) => new Date(a.date) - new Date(b.date));
+    let activityItems = rawActivity.slice(-7).map(a => ({
+      label: a.date ? (a.date.length > 5 ? a.date.substring(5) : a.date) : 'Day',
+      value: Number(a.duration || 0)
+    }));
+    if (activityItems.length === 0) {
       activityItems = [
         { label: 'Mon', value: 40 }, { label: 'Tue', value: 30 },
         { label: 'Wed', value: 50 }, { label: 'Thu', value: 45 },
@@ -6581,9 +6759,9 @@ const app = {
       unit: 'min'
     });
 
-    // 4. Expense Breakdown Donut
+    // 4. Expense Breakdown Donut: accurately aggregated for active pets
     const catTotals = {};
-    this.state.pets.forEach(p => {
+    pets.forEach(p => {
       if (p.expenses) {
         p.expenses.forEach(e => {
           catTotals[e.category] = (catTotals[e.category] || 0) + Number(e.amount);
@@ -6592,7 +6770,7 @@ const app = {
     });
     const donutSlices = Object.keys(catTotals).map((cat, i) => {
       const colors = ['#d4af37', '#10b981', '#38bdf8', '#f59e0b', '#ec4899', '#8b5cf6'];
-      return { label: cat, value: catTotals[cat], color: colors[i % colors.length] };
+      return { label: cat, value: parseFloat(catTotals[cat].toFixed(2)), color: colors[i % colors.length] };
     });
     this.renderDonutChart('dashboardExpenseChartContainer', donutSlices);
   },
@@ -6603,7 +6781,8 @@ const app = {
     listEl.innerHTML = '';
 
     const items = [];
-    this.state.pets.forEach(p => {
+    const pets = this.getActivePets();
+    pets.forEach(p => {
       if (p.appointments) {
         p.appointments.forEach(a => {
           if (a.status === 'Upcoming') {
@@ -6623,8 +6802,8 @@ const app = {
       }
     });
 
-    // Sort by date ascending
-    items.sort((a, b) => new Date(a.date) - new Date(b.date));
+    // Sort by date descending so latest entries are on top
+    items.sort((a, b) => new Date(b.date) - new Date(a.date));
     const nextFive = items.slice(0, 5);
 
     if (nextFive.length === 0) {
@@ -6666,7 +6845,8 @@ const app = {
     listEl.innerHTML = '';
 
     const records = [];
-    this.state.pets.forEach(p => {
+    const pets = this.getActivePets();
+    pets.forEach(p => {
       if (p.healthRecords) {
         p.healthRecords.forEach(hr => {
           records.push({ ...hr, petName: p.name, petId: p.id });
@@ -6674,6 +6854,7 @@ const app = {
       }
     });
 
+    // Sort by date descending so latest entries are on top
     records.sort((a, b) => new Date(b.date) - new Date(a.date));
     const recent = records.slice(0, 5);
 
@@ -6715,7 +6896,8 @@ const app = {
     if (!container) return;
     container.innerHTML = '';
 
-    this.state.pets.forEach(pet => {
+    const petsList = [...this.state.pets].sort((a, b) => new Date(b.adoptionDate || b.dob || 0) - new Date(a.adoptionDate || a.dob || 0));
+    petsList.forEach(pet => {
       const card = document.createElement('div');
       card.className = 'card';
       card.style.display = 'flex';
@@ -6943,6 +7125,9 @@ const app = {
       meds = meds.filter(m => m.status === 'Completed');
     }
 
+    // Sort descending by start date / last taken date so latest entries are on top
+    meds.sort((a, b) => new Date(b.startDate || b.lastTakenDate || 0) - new Date(a.startDate || a.lastTakenDate || 0));
+
     if (meds.length === 0) {
       tbody.innerHTML = `<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--text-muted);">No ${this.medicationTab} prescriptions found. Click "+ Add Medication" to prescribe.</td></tr>`;
       return;
@@ -7039,7 +7224,8 @@ const app = {
     document.getElementById('vaccinesDueSoonCount').textContent = dueSoon;
     document.getElementById('vaccinesOverdueCount').textContent = overdue;
 
-    vaccines.sort((a, b) => new Date(a.dueDate) - new Date(b.dueDate));
+    // Sort descending so latest vaccination entries appear on top
+    vaccines.sort((a, b) => new Date(b.adminDate || b.dueDate) - new Date(a.adminDate || a.dueDate));
 
     if (vaccines.length === 0) {
       tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--text-muted);">No vaccinations recorded. Click "+ Record Vaccine" above.</td></tr>';
@@ -7131,7 +7317,8 @@ const app = {
       }
     });
 
-    items.sort((a, b) => new Date(a.nextDue) - new Date(b.nextDue));
+    // Sort descending so latest preventive care items appear on top
+    items.sort((a, b) => new Date(b.lastCompleted || b.nextDue) - new Date(a.lastCompleted || a.nextDue));
 
     if (items.length === 0) {
       tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--text-muted);">No preventive treatments scheduled. Click "+ Add Preventive Item" above.</td></tr>';
@@ -7209,11 +7396,15 @@ const app = {
 
     logs.sort((a, b) => new Date(b.date) - new Date(a.date));
 
-    // Render detailed 30-day chart
-    const chartPoints = logs.slice(0, 15).reverse().map(l => ({ label: l.date.substring(5), value: l.score }));
+    // Render detailed 30-day chart: sort ascending by date so latest is on the far right
+    const chartPoints = [...logs].sort((a, b) => new Date(a.date) - new Date(b.date)).slice(-15).map(l => ({
+      label: l.date ? (l.date.length > 5 ? l.date.substring(5) : l.date) : 'Day',
+      value: Number(l.score)
+    }));
     this.renderAreaChart('wellnessDetailedChartContainer', chartPoints, {
       fillColor: 'rgba(16, 185, 129, 0.25)',
-      strokeColor: 'var(--success)'
+      strokeColor: 'var(--success)',
+      unit: '%'
     });
 
     if (logs.length === 0) {
@@ -7338,10 +7529,20 @@ const app = {
       if (targetKpi) targetKpi.textContent = '--';
     }
 
-    // Chart
-    const chartPoints = entries.slice(0, 10).reverse().map(e => {
-      const val = isImperial ? parseFloat((e.weight * 2.20462).toFixed(1)) : e.weight;
-      return { label: e.date.substring(5), value: val };
+    // Chart: sort ascending by date so time moves left to right, latest on the right
+    const wtYears = entries.map(e => e.date ? e.date.substring(0, 4) : '').filter(Boolean);
+    const wtMultiYear = new Set(wtYears).size > 1;
+    const chartPoints = [...entries].sort((a, b) => new Date(a.date) - new Date(b.date)).slice(-10).map(e => {
+      const num = Number(e.weight);
+      const val = isImperial ? parseFloat((num * 2.20462).toFixed(1)) : parseFloat(num.toFixed(1));
+      let lbl = 'Entry';
+      if (e.date) {
+        lbl = wtMultiYear ? e.date.substring(2, 7) : e.date.substring(5);
+      }
+      return {
+        label: lbl,
+        value: val
+      };
     });
     this.renderLineChart('weightDetailedChartContainer', chartPoints, {
       strokeColor: 'var(--primary)',
@@ -7395,6 +7596,9 @@ const app = {
         p.nutrition.forEach(n => plans.push({ ...n, petName: p.name, petId: p.id }));
       }
     });
+
+    // Sort descending so latest dietary plans appear on top
+    plans.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0) || (b.id || '').localeCompare(a.id || ''));
 
     if (plans.length === 0) {
       tbody.innerHTML = '<tr><td colspan="8" style="text-align:center; padding:32px; color:var(--text-muted);">No dietary plans registered. Click "+ Add Nutrition Plan" above.</td></tr>';
@@ -7536,7 +7740,8 @@ const app = {
       }
     });
 
-    appts.sort((a, b) => new Date(a.date) - new Date(b.date));
+    // Sort descending so latest appointments appear on top
+    appts.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     if (appts.length === 0) {
       tbody.innerHTML = '<tr><td colspan="9" style="text-align:center; padding:32px; color:var(--text-muted);">No appointments found. Click "+ Schedule Appointment" above.</td></tr>';
@@ -7664,7 +7869,8 @@ const app = {
       }
     });
 
-    reminders.sort((a, b) => new Date(a.date) - new Date(b.date));
+    // Sort descending so latest reminders appear on top
+    reminders.sort((a, b) => new Date(b.date) - new Date(a.date));
 
     reminders.forEach(r => {
       const isOver = this.isDateOverdue(r.date);
@@ -7821,6 +8027,9 @@ const app = {
         p.documents.forEach(d => docs.push({ ...d, petName: p.name, petId: p.id }));
       }
     });
+
+    // Sort descending so latest documents appear on top
+    docs.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0) || (b.id || '').localeCompare(a.id || ''));
 
     if (docs.length === 0) {
       container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--text-muted);">No documents in the vault yet. Click "Upload Document" above.</div>';
@@ -7989,27 +8198,88 @@ const app = {
 
   // ==================== ANALYTICS CHARTS ====================
   renderAnalyticsCharts() {
-    // Medication Adherence Rate
+    const activePets = this.getActivePets();
+
+    // 1. Medication Adherence Rate (chronological left to right: Week 1 to Week 4)
+    let medTotal = 0;
+    let medActive = 0;
+    activePets.forEach(p => {
+      if (p.medications) {
+        p.medications.forEach(m => {
+          medTotal++;
+          if (m.status === 'Active') medActive++;
+        });
+      }
+    });
+    const currentMedRate = medTotal > 0 ? Math.round((medActive / medTotal) * 100) : 96;
     const adherencePoints = [
-      { label: 'Week 1', value: 92 }, { label: 'Week 2', value: 96 },
-      { label: 'Week 3', value: 94 }, { label: 'Week 4', value: 100 }
+      { label: 'Week 1', value: 92 },
+      { label: 'Week 2', value: 96 },
+      { label: 'Week 3', value: 94 },
+      { label: 'Week 4', value: currentMedRate }
     ];
     this.renderBarChart('analyticsAdherenceChart', adherencePoints, { barColor: 'var(--success)', unit: '%' });
 
-    // Preventive Rate
+    // 2. Preventive Rate (chronological left to right: Jun -> Jul -> Aug -> Sep / Latest)
+    let prevTotal = 0;
+    let prevCompliant = 0;
+    activePets.forEach(p => {
+      if (p.preventiveCare) {
+        p.preventiveCare.forEach(pv => {
+          prevTotal++;
+          if (!this.isDateOverdue(pv.nextDue)) prevCompliant++;
+        });
+      }
+    });
+    const currentPrevRate = prevTotal > 0 ? Math.round((prevCompliant / prevTotal) * 100) : 95;
     const prevPoints = [
-      { label: 'Jun', value: 100 }, { label: 'Jul', value: 85 },
-      { label: 'Aug', value: 100 }, { label: 'Sep', value: 95 }
+      { label: 'Jun', value: 100 },
+      { label: 'Jul', value: 85 },
+      { label: 'Aug', value: 100 },
+      { label: 'Sep', value: currentPrevRate }
     ];
     this.renderBarChart('analyticsPreventiveChart', prevPoints, { barColor: 'var(--primary)', unit: '%' });
 
-    // Monthly Expense History
-    const expHistory = [
-      { label: 'Apr', value: 120 }, { label: 'May', value: 240 },
-      { label: 'Jun', value: 180 }, { label: 'Jul', value: 95 },
-      { label: 'Aug', value: 160 }, { label: 'Sep', value: 90 }
-    ];
-    this.renderLineChart('analyticsExpenseHistoryChart', expHistory, { strokeColor: 'var(--warning)', gradientId: 'gradAnalyticsExp' });
+    // 3. Monthly Expense History (synced with actual expenses, sorted ascending by YYYY-MM so latest month is on the right)
+    const monthMap = {};
+    activePets.forEach(p => {
+      if (p.expenses) {
+        p.expenses.forEach(e => {
+          if (e.date && e.amount) {
+            const ym = e.date.substring(0, 7);
+            monthMap[ym] = (monthMap[ym] || 0) + Number(e.amount);
+          }
+        });
+      }
+    });
+
+    let expHistory = [];
+    const sortedMonths = Object.keys(monthMap).sort();
+    if (sortedMonths.length > 0) {
+      expHistory = sortedMonths.slice(-6).map(ym => {
+        const parts = ym.split('-');
+        const d = new Date(parseInt(parts[0], 10), parseInt(parts[1], 10) - 1, 1);
+        const monthLabel = d.toLocaleString('default', { month: 'short' });
+        return {
+          label: monthLabel,
+          value: parseFloat(monthMap[ym].toFixed(2))
+        };
+      });
+    }
+
+    if (expHistory.length < 2) {
+      expHistory = [
+        { label: 'Apr', value: 120 }, { label: 'May', value: 240 },
+        { label: 'Jun', value: 180 }, { label: 'Jul', value: 95 },
+        { label: 'Aug', value: 160 }, { label: 'Sep', value: 90 }
+      ];
+    }
+
+    this.renderLineChart('analyticsExpenseHistoryChart', expHistory, {
+      strokeColor: 'var(--warning)',
+      gradientId: 'gradAnalyticsExp',
+      isCurrency: true
+    });
   },
 
   // ==================== EMERGENCY PET CARD ====================
@@ -8598,6 +8868,44 @@ const app = {
   },
 
   // ==================== PURE SVG CHART ENGINE ====================
+  showChartTooltip(container, x, y, htmlContent) {
+    if (!container) return;
+    let tooltip = container.querySelector('.chart-tooltip');
+    if (!tooltip) {
+      tooltip = document.createElement('div');
+      tooltip.className = 'chart-tooltip';
+      container.appendChild(tooltip);
+    }
+    tooltip.innerHTML = htmlContent;
+    tooltip.classList.add('visible');
+
+    const ttWidth = tooltip.offsetWidth || 130;
+    const ttHeight = tooltip.offsetHeight || 44;
+    const containerRect = container.getBoundingClientRect();
+
+    let left = x - (ttWidth / 2);
+    let top = y - ttHeight - 12;
+
+    if (top < 6) {
+      top = y + 16;
+    }
+    if (left < 8) left = 8;
+    if (left + ttWidth > containerRect.width - 8) {
+      left = Math.max(8, containerRect.width - ttWidth - 8);
+    }
+
+    tooltip.style.left = `${Math.round(left)}px`;
+    tooltip.style.top = `${Math.round(top)}px`;
+  },
+
+  hideChartTooltip(container) {
+    if (!container) return;
+    const tooltip = container.querySelector('.chart-tooltip');
+    if (tooltip) {
+      tooltip.classList.remove('visible');
+    }
+  },
+
   renderLineChart(containerId, dataPoints, options = {}) {
     const container = document.getElementById(containerId);
     if (!container) return;
@@ -8607,7 +8915,8 @@ const app = {
     }
 
     const strokeColor = options.strokeColor || '#d4af37';
-    const gradId = options.gradientId || 'gradLine_' + Math.random().toString(36).substr(2, 5);
+    const fillColor = options.fillColor || strokeColor;
+    const gradId = options.gradientId || 'gradLine_' + Math.random().toString(36).substr(2, 6);
     const width = 500;
     const height = 220;
     const padX = 40;
@@ -8616,10 +8925,10 @@ const app = {
     const values = dataPoints.map(d => Number(d.value));
     let minVal = Math.min(...values);
     let maxVal = Math.max(...values);
-    if (minVal === maxVal) { minVal -= 1; maxVal += 1; }
+    if (minVal === maxVal) { minVal = Math.max(0, minVal - 1); maxVal += 1; }
     const range = maxVal - minVal;
 
-    const getX = (i) => padX + (i / (dataPoints.length - 1 || 1)) * (width - padX * 2);
+    const getX = (i) => dataPoints.length === 1 ? width / 2 : padX + (i / (dataPoints.length - 1)) * (width - padX * 2);
     const getY = (val) => height - padY - ((val - minVal) / range) * (height - padY * 2);
 
     let pathD = `M ${getX(0)} ${getY(values[0])}`;
@@ -8632,23 +8941,28 @@ const app = {
       pathD += ` C ${midX} ${prevY}, ${midX} ${currY}, ${currX} ${currY}`;
     }
 
-    const areaD = `${pathD} L ${getX(dataPoints.length - 1)} ${height - padY} L ${getX(0)} ${height - padY} Z`;
+    const areaD = dataPoints.length > 1
+      ? `${pathD} L ${getX(dataPoints.length - 1)} ${height - padY} L ${getX(0)} ${height - padY} Z`
+      : '';
 
     let dotsSvg = '';
     let labelsSvg = '';
     dataPoints.forEach((d, i) => {
       const cx = getX(i);
       const cy = getY(d.value);
-      dotsSvg += `<circle cx="${cx}" cy="${cy}" r="4" fill="${strokeColor}" stroke="var(--bg-card)" stroke-width="2"><title>${d.label}: ${d.value} ${options.unit || ''}</title></circle>`;
+      dotsSvg += `
+        <circle id="${containerId}_dot_${i}" class="chart-dot" cx="${cx}" cy="${cy}" r="4.5" fill="${strokeColor}" stroke="var(--bg-card)" stroke-width="2.5" data-index="${i}"></circle>
+      `;
       labelsSvg += `<text x="${cx}" y="${height - 10}" font-size="10" fill="var(--text-muted)" text-anchor="middle">${d.label}</text>`;
     });
 
     container.innerHTML = `
-      <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:100%; overflow:visible;">
+      <div class="chart-tooltip"></div>
+      <svg class="chart-svg" id="${containerId}_svg" viewBox="0 0 ${width} ${height}">
         <defs>
           <linearGradient id="${gradId}" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="0%" stop-color="${strokeColor}" stop-opacity="0.3"/>
-            <stop offset="100%" stop-color="${strokeColor}" stop-opacity="0.0"/>
+            <stop offset="0%" stop-color="${fillColor}" stop-opacity="${options.fillColor ? 0.35 : 0.3}"/>
+            <stop offset="100%" stop-color="${fillColor}" stop-opacity="0.0"/>
           </linearGradient>
         </defs>
         <!-- Horizontal Grid Lines -->
@@ -8661,11 +8975,136 @@ const app = {
         <!-- Area Fill & Stroke -->
         <path d="${areaD}" fill="url(#${gradId})"/>
         <path d="${pathD}" fill="none" stroke="${strokeColor}" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- Dots & X Labels -->
+        <!-- Guide Line (Shown on hover) -->
+        <line id="${containerId}_guide" class="chart-guide-line" x1="${getX(0)}" y1="${padY}" x2="${getX(0)}" y2="${height - padY}"/>
+        <!-- Active Halo Ring -->
+        <circle id="${containerId}_halo" class="chart-dot-halo" cx="0" cy="0" r="10" fill="none" stroke="${strokeColor}" stroke-width="2" opacity="0" pointer-events="none"></circle>
+        <!-- Dots & Labels -->
         ${dotsSvg}
         ${labelsSvg}
+        <!-- Interactive Overlay to track pointer anywhere on chart -->
+        <rect id="${containerId}_overlay" x="${padX - 10}" y="${padY - 10}" width="${width - padX * 2 + 20}" height="${height - padY * 2 + 20}" fill="transparent" style="cursor:crosshair;"></rect>
       </svg>
     `;
+
+    const svg = container.querySelector('.chart-svg');
+    const overlay = document.getElementById(`${containerId}_overlay`);
+    const guide = document.getElementById(`${containerId}_guide`);
+    const halo = document.getElementById(`${containerId}_halo`);
+    if (!svg || !overlay) return;
+
+    const formatPointValue = (val) => {
+      if (options.isCurrency) {
+        return this.formatCurrency(val);
+      }
+      const u = options.unit || '';
+      return `${val}${u ? (u === '%' ? '%' : ' ' + u) : ''}`;
+    };
+
+    const activatePoint = (idx) => {
+      if (idx < 0 || idx >= dataPoints.length) return;
+      const ptData = dataPoints[idx];
+      const cx = getX(idx);
+      const cy = getY(ptData.value);
+
+      if (guide) {
+        guide.setAttribute('x1', cx);
+        guide.setAttribute('x2', cx);
+        guide.classList.add('active');
+      }
+
+      if (halo) {
+        halo.setAttribute('cx', cx);
+        halo.setAttribute('cy', cy);
+        halo.setAttribute('opacity', '0.7');
+      }
+
+      dataPoints.forEach((_, i) => {
+        const dEl = document.getElementById(`${containerId}_dot_${i}`);
+        if (dEl) {
+          if (i === idx) {
+            dEl.classList.add('active');
+          } else {
+            dEl.classList.remove('active');
+          }
+        }
+      });
+
+      const containerRect = container.getBoundingClientRect();
+      const svgPoint = svg.createSVGPoint();
+      svgPoint.x = cx;
+      svgPoint.y = cy;
+      const ctm = svg.getScreenCTM();
+      let screenX, screenY;
+      if (ctm) {
+        const transformed = svgPoint.matrixTransform(ctm);
+        screenX = transformed.x - containerRect.left;
+        screenY = transformed.y - containerRect.top;
+      } else {
+        screenX = (cx / width) * containerRect.width;
+        screenY = (cy / height) * containerRect.height;
+      }
+
+      const formattedVal = formatPointValue(ptData.value);
+      const content = `
+        <div class="chart-tooltip-header">${ptData.label}</div>
+        <div class="chart-tooltip-body">
+          <span class="chart-tooltip-dot" style="background:${strokeColor}; color:${strokeColor};"></span>
+          <span class="chart-tooltip-value">${formattedVal}</span>
+        </div>
+      `;
+      this.showChartTooltip(container, screenX, screenY, content);
+    };
+
+    const deactivatePoint = () => {
+      if (guide) guide.classList.remove('active');
+      if (halo) halo.setAttribute('opacity', '0');
+      dataPoints.forEach((_, i) => {
+        const dEl = document.getElementById(`${containerId}_dot_${i}`);
+        if (dEl) dEl.classList.remove('active');
+      });
+      this.hideChartTooltip(container);
+    };
+
+    const handlePointerMove = (e) => {
+      let clientX = e.clientX;
+      let clientY = e.clientY;
+      if (e.touches && e.touches.length > 0) {
+        clientX = e.touches[0].clientX;
+        clientY = e.touches[0].clientY;
+      }
+
+      const pt = svg.createSVGPoint();
+      pt.x = clientX;
+      pt.y = clientY;
+      const ctm = svg.getScreenCTM();
+      let svgX = 0;
+      if (ctm) {
+        const svgCoords = pt.matrixTransform(ctm.inverse());
+        svgX = svgCoords.x;
+      } else {
+        const rect = svg.getBoundingClientRect();
+        svgX = ((clientX - rect.left) / rect.width) * width;
+      }
+
+      let closestIdx = 0;
+      let minDist = Infinity;
+      dataPoints.forEach((_, i) => {
+        const dist = Math.abs(getX(i) - svgX);
+        if (dist < minDist) {
+          minDist = dist;
+          closestIdx = i;
+        }
+      });
+
+      activatePoint(closestIdx);
+    };
+
+    overlay.addEventListener('pointermove', handlePointerMove);
+    overlay.addEventListener('pointerleave', deactivatePoint);
+    overlay.addEventListener('touchstart', handlePointerMove, { passive: true });
+    overlay.addEventListener('touchmove', handlePointerMove, { passive: true });
+    overlay.addEventListener('touchend', deactivatePoint);
   },
 
   renderAreaChart(containerId, dataPoints, options = {}) {
@@ -8680,7 +9119,7 @@ const app = {
       return;
     }
 
-    const barColor = options.barColor || 'var(--primary)';
+    const barColor = options.barColor || 'var(--primary, #d4af37)';
     const width = 500;
     const height = 220;
     const padX = 40;
@@ -8689,34 +9128,117 @@ const app = {
     const values = items.map(d => Number(d.value));
     const maxVal = Math.max(...values, 10);
     const count = items.length;
-    const barWidth = Math.min(36, (width - padX * 2) / count - 12);
+    const colWidth = (width - padX * 2) / count;
+    const barWidth = Math.min(38, Math.max(16, colWidth - 14));
 
     let barsSvg = '';
     let labelsSvg = '';
 
     items.forEach((item, i) => {
-      const x = padX + (i / count) * (width - padX * 2) + ((width - padX * 2) / count - barWidth) / 2;
-      const barHeight = (item.value / maxVal) * (height - padY * 2);
+      const colX = padX + i * colWidth;
+      const x = colX + (colWidth - barWidth) / 2;
+      const barHeight = Math.max(4, (item.value / maxVal) * (height - padY * 2));
       const y = height - padY - barHeight;
 
       barsSvg += `
-        <rect x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="4" fill="${barColor}">
-          <title>${item.label}: ${item.value} ${options.unit || ''}</title>
-        </rect>
+        <g class="chart-bar-group" id="${containerId}_group_${i}" data-index="${i}">
+          <rect class="chart-bar-hit" x="${colX}" y="${padY}" width="${colWidth}" height="${height - padY * 2}" fill="transparent" style="cursor:pointer;"></rect>
+          <rect class="chart-bar" id="${containerId}_bar_${i}" x="${x}" y="${y}" width="${barWidth}" height="${barHeight}" rx="5" fill="${barColor}" data-index="${i}"></rect>
+        </g>
       `;
-      labelsSvg += `<text x="${x + barWidth / 2}" y="${height - 10}" font-size="10" fill="var(--text-muted)" text-anchor="middle">${item.label}</text>`;
+      labelsSvg += `<text x="${colX + colWidth / 2}" y="${height - 10}" font-size="10" fill="var(--text-muted)" text-anchor="middle">${item.label}</text>`;
     });
 
     container.innerHTML = `
-      <svg viewBox="0 0 ${width} ${height}" style="width:100%; height:100%; overflow:visible;">
+      <div class="chart-tooltip"></div>
+      <svg class="chart-svg" id="${containerId}_svg" viewBox="0 0 ${width} ${height}">
+        <!-- Grid Lines -->
         <line x1="${padX}" y1="${height - padY}" x2="${width - padX}" y2="${height - padY}" stroke="var(--border-color)"/>
         <line x1="${padX}" y1="${padY}" x2="${width - padX}" y2="${padY}" stroke="var(--border-color)" stroke-dasharray="3,3"/>
+        <line x1="${padX}" y1="${height / 2}" x2="${width - padX}" y2="${height / 2}" stroke="var(--border-color)" stroke-dasharray="3,3"/>
+        <!-- Y-Axis labels -->
         <text x="${padX - 8}" y="${padY + 4}" font-size="10" fill="var(--text-muted)" text-anchor="end">${maxVal}</text>
         <text x="${padX - 8}" y="${height - padY}" font-size="10" fill="var(--text-muted)" text-anchor="end">0</text>
+        <!-- Bars -->
         ${barsSvg}
+        <!-- Labels -->
         ${labelsSvg}
       </svg>
     `;
+
+    const svg = container.querySelector('.chart-svg');
+    if (!svg) return;
+
+    const formatBarValue = (val) => {
+      if (options.isCurrency) {
+        return this.formatCurrency(val);
+      }
+      const u = options.unit || '';
+      return `${val}${u ? (u === '%' ? '%' : ' ' + u) : ''}`;
+    };
+
+    items.forEach((item, i) => {
+      const grp = document.getElementById(`${containerId}_group_${i}`);
+      const bar = document.getElementById(`${containerId}_bar_${i}`);
+      if (!grp || !bar) return;
+
+      const colX = padX + i * colWidth;
+      const x = colX + (colWidth - barWidth) / 2;
+      const barHeight = Math.max(4, (item.value / maxVal) * (height - padY * 2));
+      const y = height - padY - barHeight;
+
+      const onHover = (e) => {
+        svg.classList.add('has-hover');
+        items.forEach((_, oi) => {
+          const ob = document.getElementById(`${containerId}_bar_${oi}`);
+          if (ob) ob.classList.toggle('active', oi === i);
+        });
+
+        const containerRect = container.getBoundingClientRect();
+        const svgPoint = svg.createSVGPoint();
+        svgPoint.x = x + barWidth / 2;
+        svgPoint.y = y;
+        const ctm = svg.getScreenCTM();
+        let screenX, screenY;
+        if (ctm) {
+          const transformed = svgPoint.matrixTransform(ctm);
+          screenX = transformed.x - containerRect.left;
+          screenY = transformed.y - containerRect.top;
+        } else {
+          screenX = ((x + barWidth / 2) / width) * containerRect.width;
+          screenY = (y / height) * containerRect.height;
+        }
+
+        const formattedVal = formatBarValue(item.value);
+        const content = `
+          <div class="chart-tooltip-header">${item.label}</div>
+          <div class="chart-tooltip-body">
+            <span class="chart-tooltip-dot" style="background:${barColor}; color:${barColor};"></span>
+            <span class="chart-tooltip-value">${formattedVal}</span>
+          </div>
+        `;
+        this.showChartTooltip(container, screenX, screenY, content);
+      };
+
+      const onLeave = () => {
+        svg.classList.remove('has-hover');
+        bar.classList.remove('active');
+        this.hideChartTooltip(container);
+      };
+
+      grp.addEventListener('pointerenter', onHover);
+      grp.addEventListener('pointerleave', onLeave);
+      grp.addEventListener('touchstart', onHover, { passive: true });
+    });
+
+    svg.addEventListener('pointerleave', () => {
+      svg.classList.remove('has-hover');
+      items.forEach((_, i) => {
+        const b = document.getElementById(`${containerId}_bar_${i}`);
+        if (b) b.classList.remove('active');
+      });
+      this.hideChartTooltip(container);
+    });
   },
 
   renderDonutChart(containerId, slices) {
@@ -8735,58 +9257,158 @@ const app = {
 
     let cumulativeAngle = 0;
     let pathsSvg = '';
+    const r = 70;
+    const cx = 100;
+    const cy = 100;
 
-    slices.forEach(slice => {
-      const angle = (slice.value / total) * 360;
-      const startAngle = cumulativeAngle;
-      const endAngle = cumulativeAngle + angle;
-      cumulativeAngle += angle;
-
-      const r = 70;
-      const cx = 100;
-      const cy = 100;
-
-      const x1 = cx + r * Math.cos((Math.PI * (startAngle - 90)) / 180);
-      const y1 = cy + r * Math.sin((Math.PI * (startAngle - 90)) / 180);
-      const x2 = cx + r * Math.cos((Math.PI * (endAngle - 90)) / 180);
-      const y2 = cy + r * Math.sin((Math.PI * (endAngle - 90)) / 180);
-
-      const largeArc = angle > 180 ? 1 : 0;
-      const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
-
-      pathsSvg += `
-        <path d="${d}" fill="none" stroke="${slice.color}" stroke-width="24" stroke-linecap="round">
-          <title>${slice.label}: ${this.formatCurrency(slice.value)} (${Math.round((slice.value / total) * 100)}%)</title>
-        </path>
+    if (slices.length === 1 || slices[0].value === total) {
+      const s = slices[0];
+      pathsSvg = `
+        <circle class="chart-donut-slice" id="${containerId}_slice_0" cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${s.color}" stroke-width="24" data-index="0" style="cursor:pointer;"></circle>
       `;
-    });
+    } else {
+      slices.forEach((slice, i) => {
+        const angle = (slice.value / total) * 360;
+        const clampedAngle = Math.min(angle, 359.5);
+        const startAngle = cumulativeAngle;
+        const endAngle = cumulativeAngle + clampedAngle;
+        cumulativeAngle += angle;
 
-    let legendHtml = '<div style="display:flex; flex-direction:column; gap:6px; font-size:0.78rem;">';
-    slices.forEach(s => {
+        const x1 = cx + r * Math.cos((Math.PI * (startAngle - 90)) / 180);
+        const y1 = cy + r * Math.sin((Math.PI * (startAngle - 90)) / 180);
+        const x2 = cx + r * Math.cos((Math.PI * (endAngle - 90)) / 180);
+        const y2 = cy + r * Math.sin((Math.PI * (endAngle - 90)) / 180);
+
+        const largeArc = clampedAngle > 180 ? 1 : 0;
+        const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2}`;
+
+        pathsSvg += `
+          <path class="chart-donut-slice" id="${containerId}_slice_${i}" data-index="${i}" d="${d}" fill="none" stroke="${slice.color}" stroke-width="24" stroke-linecap="round" style="cursor:pointer;"></path>
+        `;
+      });
+    }
+
+    let legendHtml = '<div class="donut-legend-container" style="display:flex; flex-direction:column; gap:4px; font-size:0.78rem; max-height:210px; overflow-y:auto;">';
+    slices.forEach((s, i) => {
+      const pct = Math.round((s.value / total) * 100);
       legendHtml += `
-        <div style="display:flex; align-items:center; gap:8px;">
-          <span style="width:10px; height:10px; border-radius:50%; background:${s.color};"></span>
-          <span style="color:var(--text-main); font-weight:500;">${s.label}</span>
-          <span style="color:var(--text-muted); margin-left:auto;">${Math.round((s.value / total) * 100)}%</span>
+        <div class="donut-legend-item" id="${containerId}_legend_${i}" data-index="${i}" style="display:flex; align-items:center; gap:8px;">
+          <span style="width:10px; height:10px; border-radius:50%; background:${s.color}; flex-shrink:0; box-shadow:0 0 5px ${s.color};"></span>
+          <span style="color:var(--text-main); font-weight:500; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:110px;">${s.label}</span>
+          <span style="color:var(--text-muted); margin-left:auto; font-weight:600;">${pct}%</span>
         </div>
       `;
     });
     legendHtml += '</div>';
 
     container.innerHTML = `
-      <div style="display:flex; align-items:center; justify-content:space-around; width:100%; height:100%;">
-        <div style="position:relative; width:170px; height:170px;">
-          <svg viewBox="0 0 200 200" style="width:100%; height:100%; transform:rotate(-0deg);">
+      <div class="chart-tooltip"></div>
+      <div style="display:flex; align-items:center; justify-content:space-around; width:100%; height:100%; gap:12px;">
+        <div style="position:relative; width:170px; height:170px; flex-shrink:0;">
+          <svg class="chart-svg" id="${containerId}_svg" viewBox="0 0 200 200" style="width:100%; height:100%;">
             ${pathsSvg}
           </svg>
-          <div style="position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; align-items:center; justify-content:center;">
-            <div style="font-size:0.7rem; color:var(--text-muted); text-transform:uppercase;">Total</div>
-            <div style="font-size:1.1rem; font-weight:700; color:var(--text-main);">${this.formatCurrency(total)}</div>
+          <div id="${containerId}_center" style="position:absolute; top:0; left:0; right:0; bottom:0; display:flex; flex-direction:column; align-items:center; justify-content:center; pointer-events:none; text-align:center; padding:8px; transition:all 0.2s ease;">
+            <div id="${containerId}_center_sub" style="font-size:0.68rem; color:var(--text-muted); text-transform:uppercase; letter-spacing:0.5px; transition:color 0.2s ease;">Total</div>
+            <div id="${containerId}_center_val" style="font-size:1.15rem; font-weight:700; color:var(--text-main); font-family:var(--font-heading); transition:color 0.2s ease;">${this.formatCurrency(total)}</div>
+            <div id="${containerId}_center_extra" style="font-size:0.68rem; font-weight:600; color:var(--primary); display:none;"></div>
           </div>
         </div>
-        <div style="min-width:140px;">${legendHtml}</div>
+        <div style="min-width:130px; flex:1; max-width:190px;">${legendHtml}</div>
       </div>
     `;
+
+    const svg = container.querySelector('.chart-svg');
+    const centerSub = document.getElementById(`${containerId}_center_sub`);
+    const centerVal = document.getElementById(`${containerId}_center_val`);
+    const centerExtra = document.getElementById(`${containerId}_center_extra`);
+    if (!svg) return;
+
+    const activateSlice = (idx, e) => {
+      if (idx < 0 || idx >= slices.length) return;
+      const s = slices[idx];
+      const pct = Math.round((s.value / total) * 100);
+
+      svg.classList.add('has-hover');
+
+      slices.forEach((_, oi) => {
+        const el = document.getElementById(`${containerId}_slice_${oi}`);
+        if (el) el.classList.toggle('active', oi === idx);
+        const leg = document.getElementById(`${containerId}_legend_${oi}`);
+        if (leg) leg.classList.toggle('active', oi === idx);
+      });
+
+      if (centerSub) {
+        centerSub.textContent = s.label;
+        centerSub.style.color = s.color;
+      }
+      if (centerVal) {
+        centerVal.textContent = this.formatCurrency(s.value);
+      }
+      if (centerExtra) {
+        centerExtra.textContent = `${pct}% of total`;
+        centerExtra.style.display = 'block';
+        centerExtra.style.color = s.color;
+      }
+
+      const containerRect = container.getBoundingClientRect();
+      let screenX = containerRect.width * 0.35;
+      let screenY = containerRect.height * 0.4;
+      if (e && e.clientX) {
+        screenX = e.clientX - containerRect.left;
+        screenY = e.clientY - containerRect.top;
+      }
+
+      const content = `
+        <div class="chart-tooltip-header">${s.label}</div>
+        <div class="chart-tooltip-body">
+          <span class="chart-tooltip-dot" style="background:${s.color}; color:${s.color};"></span>
+          <span class="chart-tooltip-value">${this.formatCurrency(s.value)}</span>
+          <span class="chart-tooltip-badge">${pct}%</span>
+        </div>
+      `;
+      this.showChartTooltip(container, screenX, screenY, content);
+    };
+
+    const deactivateSlice = () => {
+      svg.classList.remove('has-hover');
+      slices.forEach((_, oi) => {
+        const el = document.getElementById(`${containerId}_slice_${oi}`);
+        if (el) el.classList.remove('active');
+        const leg = document.getElementById(`${containerId}_legend_${oi}`);
+        if (leg) leg.classList.remove('active');
+      });
+
+      if (centerSub) {
+        centerSub.textContent = 'Total';
+        centerSub.style.color = 'var(--text-muted)';
+      }
+      if (centerVal) {
+        centerVal.textContent = this.formatCurrency(total);
+      }
+      if (centerExtra) {
+        centerExtra.style.display = 'none';
+      }
+      this.hideChartTooltip(container);
+    };
+
+    slices.forEach((s, i) => {
+      const el = document.getElementById(`${containerId}_slice_${i}`);
+      const leg = document.getElementById(`${containerId}_legend_${i}`);
+
+      if (el) {
+        el.addEventListener('pointerenter', (e) => activateSlice(i, e));
+        el.addEventListener('pointermove', (e) => activateSlice(i, e));
+        el.addEventListener('pointerleave', deactivateSlice);
+        el.addEventListener('touchstart', (e) => activateSlice(i, e), { passive: true });
+      }
+      if (leg) {
+        leg.addEventListener('pointerenter', (e) => activateSlice(i, e));
+        leg.addEventListener('pointerleave', deactivateSlice);
+      }
+    });
+
+    svg.addEventListener('pointerleave', deactivateSlice);
   },
 
   // ==================== MODAL & CRUD HANDLERS ====================
@@ -10728,6 +11350,8 @@ const app = {
     });
   }
 };
+
+window.app = app;
 
 // Auto-boot on DOM ready
 document.addEventListener('DOMContentLoaded', () => {
