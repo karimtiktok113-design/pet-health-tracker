@@ -10023,6 +10023,7 @@ const app = {
 
   generateAndPrintReport(mode) {
     this.updateLiveReportPreview();
+
     if (mode === 'preview') {
       const container = document.getElementById('reportPreviewContainer');
       if (container) {
@@ -10032,8 +10033,283 @@ const app = {
       return;
     }
 
-    // Direct clean A4 printing via browser print dialog
-    window.print();
+    // Grab only the generated report sheets from the preview container
+    const container = document.getElementById('reportPreviewContainer');
+    if (!container || !container.innerHTML.trim()) {
+      this.showToast('No report preview available. Click Refresh Preview first.', 'warning');
+      return;
+    }
+
+    // Extract all report-specific CSS from the page's stylesheets
+    const reportCSS = `
+      *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        background: #ffffff;
+        color: #0f172a;
+        line-height: 1.5;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .report-preview-canvas {
+        display: flex;
+        flex-direction: column;
+        gap: 0;
+        align-items: center;
+        width: 100%;
+      }
+      .report-a4-sheet {
+        width: 100%;
+        max-width: 100%;
+        background: #ffffff;
+        color: #0f172a;
+        padding: 28px 32px;
+        box-sizing: border-box;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+        position: relative;
+        page-break-after: always;
+        break-after: page;
+      }
+      .report-a4-sheet:last-child { page-break-after: auto; break-after: auto; }
+      .report-header-banner {
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 3px solid #d4af37;
+        padding-bottom: 14px;
+        margin-bottom: 20px;
+      }
+      .report-brand-title {
+        font-size: 1.35rem;
+        font-weight: 800;
+        letter-spacing: -0.02em;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+      }
+      .report-brand-sub {
+        font-size: 0.78rem;
+        color: #64748b;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin-top: 2px;
+      }
+      .report-meta-box { text-align: right; font-size: 0.76rem; color: #64748b; }
+      .report-scope-badge {
+        display: inline-block;
+        background: #f1f5f9;
+        color: #0f172a;
+        border: 1px solid #cbd5e1;
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-weight: 700;
+        font-size: 0.7rem;
+        margin-top: 4px;
+      }
+      .report-pet-hero {
+        display: flex;
+        gap: 18px;
+        align-items: center;
+        background: #f8fafc;
+        border: 1px solid #e2e8f0;
+        border-radius: 10px;
+        padding: 14px 18px;
+        margin-bottom: 18px;
+      }
+      .report-pet-avatar {
+        width: 70px;
+        height: 70px;
+        border-radius: 12px;
+        object-fit: cover;
+        border: 3px solid #d4af37;
+        flex-shrink: 0;
+        background: #ffffff;
+      }
+      .report-pet-title { font-size: 1.35rem; font-weight: 800; color: #0f172a; line-height: 1.2; }
+      .report-pet-subtitle { font-size: 0.85rem; color: #475569; font-weight: 600; margin-top: 2px; }
+      .report-chips-row { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 8px; }
+      .report-chip {
+        font-size: 0.73rem;
+        background: #ffffff;
+        border: 1px solid #cbd5e1;
+        padding: 2px 7px;
+        border-radius: 5px;
+        color: #334155;
+        font-weight: 600;
+      }
+      .report-chip.alert-danger { background: #fef2f2; border-color: #fecaca; color: #b91c1c; }
+      .report-chip.alert-warning { background: #fffbeb; border-color: #fde68a; color: #b45309; }
+      .report-kpi-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 10px;
+        margin-bottom: 20px;
+      }
+      .report-kpi-box {
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 8px;
+        padding: 10px 8px;
+        text-align: center;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+      }
+      .report-kpi-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #64748b;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+      }
+      .report-kpi-value { font-size: 1.25rem; font-weight: 800; color: #0f172a; margin: 3px 0 2px; }
+      .report-kpi-sub { font-size: 0.68rem; color: #64748b; }
+      .report-section { margin-bottom: 18px; break-inside: avoid; page-break-inside: avoid; }
+      .report-section-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        border-bottom: 2px solid #e2e8f0;
+        padding-bottom: 5px;
+        margin-bottom: 8px;
+      }
+      .report-section-title {
+        font-size: 0.98rem;
+        font-weight: 700;
+        color: #0f172a;
+        display: flex;
+        align-items: center;
+        gap: 6px;
+      }
+      .report-table-wrapper { width: 100%; overflow-x: visible; margin-bottom: 4px; }
+      .report-table { width: 100%; border-collapse: collapse; font-size: 0.79rem; }
+      .report-table th {
+        background: #f8fafc;
+        color: #1e293b;
+        font-weight: 700;
+        text-align: left;
+        padding: 6px 9px;
+        border: 1px solid #cbd5e1;
+        white-space: nowrap;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .report-table td { padding: 6px 9px; border: 1px solid #cbd5e1; color: #334155; vertical-align: top; }
+      .report-table tr:nth-child(even) td {
+        background: #fbfcfe;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      .report-status-pill {
+        display: inline-block;
+        padding: 2px 6px;
+        border-radius: 4px;
+        font-size: 0.69rem;
+        font-weight: 700;
+        white-space: nowrap;
+      }
+      .report-status-pill.success { background: #dcfce7; color: #15803d; border: 1px solid #86efac; }
+      .report-status-pill.danger  { background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; }
+      .report-status-pill.warning { background: #fef3c7; color: #b45309; border: 1px solid #fcd34d; }
+      .report-status-pill.neutral { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+      .report-signature-block {
+        margin-top: 24px;
+        padding-top: 14px;
+        border-top: 1px dashed #cbd5e1;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-end;
+        gap: 20px;
+        font-size: 0.76rem;
+        color: #475569;
+        break-inside: avoid;
+        page-break-inside: avoid;
+      }
+      .report-sign-line { width: 200px; border-bottom: 1px solid #0f172a; margin-bottom: 5px; height: 20px; }
+      .report-stamp-box {
+        width: 100px;
+        height: 50px;
+        border: 2px dashed #94a3b8;
+        border-radius: 6px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.62rem;
+        color: #94a3b8;
+        text-transform: uppercase;
+        font-weight: 700;
+        text-align: center;
+        line-height: 1.2;
+      }
+      @page {
+        size: A4 portrait;
+        margin: 10mm 12mm;
+      }
+      @media print {
+        * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        body { background: #ffffff !important; margin: 0 !important; padding: 0 !important; }
+        .report-a4-sheet {
+          box-shadow: none !important;
+          border: none !important;
+          border-radius: 0 !important;
+          page-break-after: always;
+          break-after: page;
+        }
+        .report-a4-sheet:last-child { page-break-after: auto; break-after: auto; }
+        .report-pet-hero, .report-kpi-grid, .report-section, .report-signature-block {
+          break-inside: avoid;
+          page-break-inside: avoid;
+        }
+        .report-table th { background: #f8fafc !important; }
+        .report-table tr:nth-child(even) td { background: #fbfcfe !important; }
+        .report-status-pill.success { background: #dcfce7 !important; }
+        .report-status-pill.danger  { background: #fee2e2 !important; }
+        .report-status-pill.warning { background: #fef3c7 !important; }
+        .report-status-pill.neutral { background: #f1f5f9 !important; }
+        .report-chip.alert-danger  { background: #fef2f2 !important; }
+        .report-chip.alert-warning { background: #fffbeb !important; }
+        .report-kpi-box { background: #ffffff !important; }
+        .report-pet-hero { background: #f8fafc !important; }
+      }
+    `;
+
+    // Build a complete, self-contained HTML document with only the report content
+    const reportHTML = `<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>PetCare Pro — Health Report</title>
+  <style>${reportCSS}</style>
+</head>
+<body>
+  <div class="report-preview-canvas">
+    ${container.innerHTML}
+  </div>
+  <script>
+    // Auto-trigger print after a short delay to allow images/fonts to load
+    window.addEventListener('load', function() {
+      setTimeout(function() {
+        window.print();
+        // Close the window after print dialog closes (optional)
+        // window.close();
+      }, 600);
+    });
+  <\/script>
+</body>
+</html>`;
+
+    // Open in a new popup window sized to A4 aspect
+    const printWin = window.open('', '_blank', 'width=900,height=1200,scrollbars=yes,resizable=yes');
+    if (!printWin) {
+      this.showToast('Pop-up blocked! Please allow pop-ups for this page to print.', 'danger');
+      return;
+    }
+    printWin.document.open();
+    printWin.document.write(reportHTML);
+    printWin.document.close();
+    this.showToast('Print dialog opening — your report is ready!', 'success');
   },
 
   // ==================== CSV EXPORT ====================
