@@ -27,7 +27,7 @@
       --transition-normal: 0.25s cubic-bezier(0.4, 0, 0.2, 1);
       --transition-slow: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
       
-      --sidebar-width: 275px;
+      --sidebar-width: 290px;
       --sidebar-collapsed-width: 72px;
       --header-height: 70px;
       --z-header: 100;
@@ -462,8 +462,9 @@
 
     html {
       overflow-x: hidden;
+      overflow-y: auto;
       -webkit-text-size-adjust: 100%;
-      overscroll-behavior-y: none;
+      scroll-behavior: smooth;
     }
 
     body {
@@ -473,17 +474,15 @@
       line-height: 1.5;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
-      overflow-x: hidden;
       min-height: 100vh;
       min-height: 100dvh;
       margin: 0;
       padding: 0;
       display: block;
-      overscroll-behavior-y: none;
       -webkit-overflow-scrolling: touch;
     }
 
-    button, .btn, .nav-item, .bottom-nav-item, .kpi-card, .card, .pet-selector-wrapper, .pet-menu-item {
+    button, .btn, .nav-item, .bottom-nav-item, .pet-selector-wrapper, .pet-menu-item {
       touch-action: manipulation;
     }
 
@@ -598,14 +597,21 @@
       width: var(--sidebar-collapsed-width);
     }
     .app-sidebar.collapsed .sidebar-header {
-      padding: 0 14px;
+      padding: 0 8px;
       justify-content: center;
     }
-    .app-sidebar.collapsed .sidebar-logo-group div:last-child {
+    .app-sidebar.collapsed .sidebar-logo-group {
       display: none;
     }
     .app-sidebar.collapsed .sidebar-toggle-btn {
-      display: none;
+      display: flex;
+      margin: 0 auto;
+      padding: 8px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: var(--radius-sm);
+    }
+    .app-sidebar.collapsed .sidebar-toggle-btn svg {
+      transform: rotate(180deg);
     }
 
     .sidebar-header {
@@ -677,7 +683,7 @@
       min-height: 0; /* CRITICAL: allows flex child to scroll */
       overflow-y: auto;
       overflow-x: hidden;
-      padding: 12px 10px 20px;
+      padding: 10px 10px 48px;
       display: flex;
       flex-direction: column;
       gap: 2px;
@@ -700,36 +706,65 @@
     }
 
     .nav-section-title {
-      font-size: 0.68rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.74rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.08em;
-      color: rgba(255, 255, 255, 0.45);
-      padding: 10px 10px 4px;
+      color: #cbd5e1;
+      padding: 10px 10px 5px;
+      margin-top: 14px;
+      margin-bottom: 2px;
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
       user-select: none;
+      flex-shrink: 0;
+      min-height: 24px;
+      line-height: 1.2;
     }
+    .nav-section-title:first-of-type {
+      margin-top: 2px;
+      padding-top: 4px;
+    }
+    .nav-section-title:not(:first-of-type) {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .nav-section-title::before {
+      content: '';
+      display: inline-block;
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--accent, var(--primary));
+      box-shadow: 0 0 6px var(--accent, var(--primary));
+      flex-shrink: 0;
+    }
+    .app-sidebar.collapsed .nav-section-title,
     .collapsed .nav-section-title {
-      display: none;
+      display: none !important;
     }
 
     .nav-item {
       display: flex;
       align-items: center;
-      gap: 10px;
-      padding: 8px 12px;
+      gap: 9px;
+      padding: 7px 11px;
       border-radius: var(--radius-md);
-      color: rgba(255, 255, 255, 0.72);
+      color: rgba(255, 255, 255, 0.76);
       cursor: pointer;
       font-weight: 500;
-      font-size: 0.86rem;
+      font-size: 0.84rem;
+      letter-spacing: -0.01em;
       transition: all var(--transition-fast);
       position: relative;
       border: 1px solid transparent;
       user-select: none;
-      min-height: 38px;
+      min-height: 36px;
     }
     .nav-item span:first-of-type {
       flex: 1;
@@ -737,6 +772,7 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      line-height: 1.25;
     }
     .nav-item svg {
       width: 18px;
@@ -1462,6 +1498,8 @@
       pointer-events: none;
       -webkit-backface-visibility: hidden;
       backface-visibility: hidden;
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
     .modal-overlay.active {
       display: flex !important;
@@ -1493,9 +1531,20 @@
       transform: scale(0.96) translateY(8px);
       transition: transform var(--transition-normal);
       overflow: hidden;
+      margin: auto;
+      position: relative;
     }
     .modal-overlay.active .modal-container {
       transform: scale(1) translateY(0);
+    }
+    .modal-container > form {
+      display: flex;
+      flex-direction: column;
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow: hidden;
+      height: 100%;
+      width: 100%;
     }
     .modal-header {
       padding: 18px 24px;
@@ -1503,11 +1552,16 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
+      flex-shrink: 0;
+      background: var(--bg-card);
     }
     .modal-title {
       font-size: 1.2rem;
       font-weight: 700;
       color: var(--text-main);
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
     .modal-close-btn {
       background: transparent;
@@ -1519,6 +1573,8 @@
       display: flex;
       align-items: center;
       justify-content: center;
+      flex-shrink: 0;
+      transition: all var(--transition-fast);
     }
     .modal-close-btn:hover {
       background: var(--bg-surface);
@@ -1527,8 +1583,10 @@
     .modal-body {
       padding: 24px;
       overflow-y: auto;
+      overscroll-behavior: contain;
+      -webkit-overflow-scrolling: touch;
       min-height: 0;
-      flex: 1;
+      flex: 1 1 auto;
     }
     .modal-footer {
       padding: 16px 24px;
@@ -1538,6 +1596,19 @@
       justify-content: flex-end;
       gap: 12px;
       background: var(--bg-surface);
+      flex-shrink: 0;
+      position: sticky;
+      bottom: 0;
+      z-index: 10;
+      box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.08);
+    }
+    .modal-footer .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-weight: 600;
+      white-space: nowrap;
     }
 
     /* Toast System */
@@ -1895,12 +1966,17 @@
        RESPONSIVE BREAKPOINTS
        ========================================================================== */
     @media (max-width: 1024px) {
+      body {
+        overscroll-behavior-y: none;
+      }
       :root {
-        --sidebar-width: 280px;
+        --sidebar-width: 290px;
       }
       .app-sidebar {
         position: fixed;
-        left: -280px;
+        left: -290px;
+        width: 290px;
+        max-width: 85vw;
         top: 0;
         bottom: 0;
         z-index: 1000;
@@ -1909,7 +1985,7 @@
         backface-visibility: hidden;
       }
       .app-sidebar.mobile-open {
-        transform: translateX(280px);
+        transform: translateX(290px);
       }
       .mobile-menu-btn {
         display: flex;
@@ -1954,16 +2030,38 @@
       .kpi-grid {
         grid-template-columns: 1fr;
       }
+      .modal-overlay {
+        padding: 10px;
+      }
       .modal-container {
-        max-height: 95vh;
-        max-height: 95dvh;
+        max-height: 94vh;
+        max-height: 94dvh;
         border-radius: var(--radius-lg);
+        margin: auto;
+      }
+      .modal-header {
+        padding: 14px 18px;
+      }
+      .modal-title {
+        font-size: 1.05rem;
       }
       .modal-body {
-        padding: 16px;
+        padding: 16px 18px;
       }
       .modal-footer {
-        padding: 12px 16px;
+        padding: 12px 18px;
+        flex-wrap: wrap;
+        gap: 10px;
+      }
+      .modal-footer .btn {
+        flex: 1 1 auto;
+        min-width: 120px;
+        justify-content: center;
+        padding: 10px 16px;
+      }
+      .form-row {
+        grid-template-columns: 1fr;
+        gap: 12px;
       }
       .app-header {
         padding: 0 14px;
@@ -2280,99 +2378,99 @@
 
       <nav class="sidebar-nav" id="sidebarNav">
         <div class="nav-section-title">Overview</div>
-        <div class="nav-item active" data-view="dashboard">
+        <div class="nav-item active" data-view="dashboard" title="Dashboard">
           <svg width="18" height="18"><use href="#icon-paw"/></svg>
           <span>Dashboard</span>
         </div>
-        <div class="nav-item" data-view="pets">
+        <div class="nav-item" data-view="pets" title="My Pets">
           <svg width="18" height="18"><use href="#icon-star"/></svg>
           <span>My Pets</span>
         </div>
 
         <div class="nav-section-title">Clinical & Medical</div>
-        <div class="nav-item" data-view="health">
+        <div class="nav-item" data-view="health" title="Health Records">
           <svg width="18" height="18"><use href="#icon-heart-pulse"/></svg>
           <span>Health Records</span>
         </div>
-        <div class="nav-item" data-view="medications">
+        <div class="nav-item" data-view="medications" title="Medications">
           <svg width="18" height="18"><use href="#icon-pill"/></svg>
           <span>Medications</span>
           <span class="nav-badge" id="badgeMeds" style="display:none">0</span>
         </div>
-        <div class="nav-item" data-view="vaccinations">
+        <div class="nav-item" data-view="vaccinations" title="Vaccinations">
           <svg width="18" height="18"><use href="#icon-syringe"/></svg>
           <span>Vaccinations</span>
           <span class="nav-badge" id="badgeVaccines" style="display:none">0</span>
         </div>
-        <div class="nav-item" data-view="preventive">
+        <div class="nav-item" data-view="preventive" title="Preventive Care">
           <svg width="18" height="18"><use href="#icon-shield"/></svg>
           <span>Preventive Care</span>
         </div>
-        <div class="nav-item" data-view="wellness">
+        <div class="nav-item" data-view="wellness" title="Wellness Tracker">
           <svg width="18" height="18"><use href="#icon-activity"/></svg>
           <span>Wellness Tracker</span>
         </div>
 
         <div class="nav-section-title">Daily Care & Growth</div>
-        <div class="nav-item" data-view="weight">
+        <div class="nav-item" data-view="weight" title="Weight & Growth">
           <svg width="18" height="18"><use href="#icon-scale"/></svg>
           <span>Weight & Growth</span>
         </div>
-        <div class="nav-item" data-view="nutrition">
+        <div class="nav-item" data-view="nutrition" title="Nutrition & Feeding">
           <svg width="18" height="18"><use href="#icon-utensils"/></svg>
           <span>Nutrition & Feeding</span>
         </div>
-        <div class="nav-item" data-view="activity">
+        <div class="nav-item" data-view="activity" title="Activity & Exercise">
           <svg width="18" height="18"><use href="#icon-zap"/></svg>
           <span>Activity & Exercise</span>
         </div>
-        <div class="nav-item" data-view="grooming">
+        <div class="nav-item" data-view="grooming" title="Grooming">
           <svg width="18" height="18"><use href="#icon-scissors"/></svg>
           <span>Grooming</span>
         </div>
 
         <div class="nav-section-title">Schedule & Records</div>
-        <div class="nav-item" data-view="appointments">
+        <div class="nav-item" data-view="appointments" title="Appointments">
           <svg width="18" height="18"><use href="#icon-calendar"/></svg>
           <span>Appointments</span>
           <span class="nav-badge" id="badgeAppts" style="display:none">0</span>
         </div>
-        <div class="nav-item" data-view="reminders">
+        <div class="nav-item" data-view="reminders" title="Smart Reminders">
           <svg width="18" height="18"><use href="#icon-bell"/></svg>
           <span>Smart Reminders</span>
           <span class="nav-badge" id="badgeReminders" style="display:none">0</span>
         </div>
-        <div class="nav-item" data-view="expenses">
+        <div class="nav-item" data-view="expenses" title="Expense Tracker">
           <svg width="18" height="18"><use href="#icon-dollar-sign"/></svg>
           <span>Expense Tracker</span>
         </div>
-        <div class="nav-item" data-view="documents">
+        <div class="nav-item" data-view="documents" title="Document Vault">
           <svg width="18" height="18"><use href="#icon-folder"/></svg>
           <span>Document Vault</span>
         </div>
 
         <div class="nav-section-title">Intelligence & Tools</div>
-        <div class="nav-item" data-view="timeline">
+        <div class="nav-item" data-view="timeline" title="Health Timeline">
           <svg width="18" height="18"><use href="#icon-timeline"/></svg>
           <span>Health Timeline</span>
         </div>
-        <div class="nav-item" data-view="insights">
+        <div class="nav-item" data-view="insights" title="Health Insights">
           <svg width="18" height="18"><use href="#icon-alert-triangle"/></svg>
           <span>Health Insights</span>
         </div>
-        <div class="nav-item" data-view="analytics">
+        <div class="nav-item" data-view="analytics" title="Analytics">
           <svg width="18" height="18"><use href="#icon-bar-chart"/></svg>
           <span>Analytics</span>
         </div>
-        <div class="nav-item" data-view="reports">
+        <div class="nav-item" data-view="reports" title="Report Generator">
           <svg width="18" height="18"><use href="#icon-file-text"/></svg>
           <span>Report Generator</span>
         </div>
-        <div class="nav-item" data-view="emergency">
+        <div class="nav-item" data-view="emergency" title="Emergency Card">
           <svg width="18" height="18"><use href="#icon-emergency"/></svg>
           <span>Emergency Card</span>
         </div>
-        <div class="nav-item" data-view="settings">
+        <div class="nav-item" data-view="settings" title="Settings">
           <svg width="18" height="18"><use href="#icon-settings"/></svg>
           <span>Settings</span>
         </div>
@@ -4802,7 +4900,6 @@ const DEFAULT_DATA = {
       gender: 'Female',
       dob: '2021-04-15',
       color: 'Golden Cream',
-      weight: 28.5,
       height: 56,
       microchip: '985141002348912',
       adoptionDate: '2021-06-20',
@@ -5012,7 +5109,6 @@ const DEFAULT_DATA = {
       gender: 'Male',
       dob: '2022-06-10',
       color: 'Brown & Black Mackerel Tabby',
-      weight: 4.6,
       height: 25,
       microchip: '985141009823112',
       adoptionDate: '2022-09-01',
@@ -5113,7 +5209,6 @@ const DEFAULT_DATA = {
       gender: 'Male',
       dob: '2023-01-20',
       color: 'Broken Orange',
-      weight: 1.8,
       height: 18,
       microchip: '985141007712349',
       adoptionDate: '2023-03-15',
@@ -5219,8 +5314,21 @@ const app = {
         if (pet.weight.length > 0 && typeof pet.weight[0].weight === 'number') {
           pet.currentWeight = pet.weight[0].weight;
         }
-      } else if (typeof pet.weight === 'number') {
-        pet.currentWeight = pet.weight;
+      } else if (typeof pet.weight === 'number' && pet.weight > 0) {
+        const w = pet.weight;
+        pet.currentWeight = w;
+        pet.weight = [{
+          id: 'wt-base-' + (pet.id || Date.now()),
+          date: pet.dob || new Date().toISOString().split('T')[0],
+          weight: w,
+          bcs: 5,
+          goal: w,
+          notes: 'Initial recorded weight'
+        }];
+        mutated = true;
+      } else {
+        pet.weight = [];
+        mutated = true;
       }
       if (!pet.healthRecords) pet.healthRecords = [];
       if (!pet.medications) pet.medications = [];
@@ -5751,7 +5859,7 @@ const app = {
       document.getElementById('summaryPetName').textContent = currPet.name;
       document.getElementById('summaryPetSpeciesBreed').textContent = `${currPet.species} • ${currPet.breed || 'Breed Unspecified'}`;
       document.getElementById('summaryPetAge').textContent = `Age: ${this.calcAge(currPet.dob)}`;
-      document.getElementById('summaryPetWeight').textContent = `Weight: ${this.formatWeight(currPet.weight)}`;
+      document.getElementById('summaryPetWeight').textContent = `Weight: ${this.getPetCurrentWeight(currPet)}`;
       document.getElementById('summaryPetMicrochip').textContent = `Chip: ${currPet.microchip || 'N/A'}`;
     } else {
       summaryCard.style.display = 'none';
@@ -6483,30 +6591,92 @@ const app = {
     const pets = this.getActivePets();
     let entries = [];
     pets.forEach(p => {
-      if (p.weight) {
-        p.weight.forEach(w => entries.push({ ...w, petName: p.name, petId: p.id }));
+      if (Array.isArray(p.weight)) {
+        p.weight.forEach(w => {
+          if (w && typeof w.weight === 'number') {
+            entries.push({ ...w, petName: p.name, petId: p.id });
+          }
+        });
+      } else if (typeof p.weight === 'number' && p.weight > 0) {
+        entries.push({
+          id: 'wt-base-' + p.id,
+          date: p.dob || new Date().toISOString().split('T')[0],
+          weight: p.weight,
+          bcs: 5,
+          goal: p.weight,
+          notes: 'Initial recorded weight',
+          petName: p.name,
+          petId: p.id
+        });
       }
     });
 
     entries.sort((a, b) => new Date(b.date) - new Date(a.date));
 
+    const isImperial = this.state && this.state.settings && this.state.settings.unitSystem === 'imperial';
+    const unitLabel = isImperial ? 'lb' : 'kg';
+
+    const unitBadge = document.getElementById('weightUnitBadge');
+    if (unitBadge) {
+      unitBadge.textContent = isImperial ? 'Imperial (lb)' : 'Metric (kg)';
+    }
+
     // KPIs
-    const currPet = pets[0];
-    if (currPet && entries.length > 0) {
+    if (entries.length > 0) {
       const latest = entries[0].weight;
       const prev = entries.length > 1 ? entries[1].weight : latest;
-      const diff = (latest - prev).toFixed(1);
-      const diffSign = diff > 0 ? `+${diff}` : diff;
-      document.getElementById('weightCurrentKpi').textContent = this.formatWeight(latest);
-      document.getElementById('weightChangeKpi').textContent = `${diffSign} kg change`;
-      document.getElementById('weightTargetKpi').textContent = this.formatWeight(entries[0].goal || latest);
+      const rawDiff = latest - prev;
+      const diffConverted = isImperial ? (rawDiff * 2.20462).toFixed(1) : rawDiff.toFixed(1);
+      const diffSign = Number(diffConverted) > 0 ? `+${diffConverted}` : diffConverted;
+
+      const currentKpi = document.getElementById('weightCurrentKpi');
+      if (currentKpi) currentKpi.textContent = this.formatWeight(latest);
+
+      const changeKpi = document.getElementById('weightChangeKpi');
+      if (changeKpi) changeKpi.textContent = `${diffSign} ${unitLabel} change`;
+
+      const targetKpi = document.getElementById('weightTargetKpi');
+      if (targetKpi) targetKpi.textContent = this.formatWeight(entries[0].goal || latest);
+
+      const goalDiffKpi = document.getElementById('weightGoalDiffKpi');
+      if (goalDiffKpi) {
+        const goalDiff = latest - (entries[0].goal || latest);
+        const goalDiffDisplay = isImperial ? (goalDiff * 2.20462).toFixed(1) : goalDiff.toFixed(1);
+        if (Math.abs(goalDiff) < 0.2) {
+          goalDiffKpi.textContent = 'At target goal weight';
+          goalDiffKpi.className = 'kpi-trend positive';
+        } else if (goalDiff > 0) {
+          goalDiffKpi.textContent = `+${goalDiffDisplay} ${unitLabel} above target`;
+          goalDiffKpi.className = 'kpi-trend';
+        } else {
+          goalDiffKpi.textContent = `${goalDiffDisplay} ${unitLabel} below target`;
+          goalDiffKpi.className = 'kpi-trend info';
+        }
+      }
+
+      const bcsKpi = document.getElementById('weightBcsKpi');
+      if (bcsKpi) {
+        const avgBcs = (entries.reduce((sum, e) => sum + (Number(e.bcs) || 5), 0) / entries.length).toFixed(0);
+        bcsKpi.textContent = `${avgBcs} / 9`;
+      }
+    } else {
+      const currentKpi = document.getElementById('weightCurrentKpi');
+      if (currentKpi) currentKpi.textContent = '--';
+      const changeKpi = document.getElementById('weightChangeKpi');
+      if (changeKpi) changeKpi.textContent = `0.0 ${unitLabel} (0%)`;
+      const targetKpi = document.getElementById('weightTargetKpi');
+      if (targetKpi) targetKpi.textContent = '--';
     }
 
     // Chart
-    const chartPoints = entries.slice(0, 10).reverse().map(e => ({ label: e.date.substring(5), value: e.weight }));
+    const chartPoints = entries.slice(0, 10).reverse().map(e => {
+      const val = isImperial ? parseFloat((e.weight * 2.20462).toFixed(1)) : e.weight;
+      return { label: e.date.substring(5), value: val };
+    });
     this.renderLineChart('weightDetailedChartContainer', chartPoints, {
       strokeColor: 'var(--primary)',
-      gradientId: 'gradWeightDetailed'
+      gradientId: 'gradWeightDetailed',
+      unit: unitLabel
     });
 
     if (entries.length === 0) {
@@ -6516,15 +6686,16 @@ const app = {
 
     entries.forEach((e, idx) => {
       const prevWeight = entries[idx + 1] ? entries[idx + 1].weight : e.weight;
-      const delta = (e.weight - prevWeight).toFixed(1);
-      const deltaText = delta > 0 ? `+${delta}` : delta;
+      const rawDelta = e.weight - prevWeight;
+      const deltaVal = isImperial ? (rawDelta * 2.20462).toFixed(1) : rawDelta.toFixed(1);
+      const deltaText = Number(deltaVal) > 0 ? `+${deltaVal}` : deltaVal;
 
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td style="font-weight:600;">${e.date}</td>
         <td><span class="badge badge-neutral">${e.petName}</span></td>
         <td style="font-weight:700;">${this.formatWeight(e.weight)}</td>
-        <td style="color:${delta > 0 ? 'var(--warning)' : delta < 0 ? 'var(--info)' : 'var(--text-muted)'}; font-weight:600;">${deltaText} kg</td>
+        <td style="color:${rawDelta > 0 ? 'var(--warning)' : rawDelta < 0 ? 'var(--info)' : 'var(--text-muted)'}; font-weight:600;">${deltaText} ${unitLabel}</td>
         <td>${e.height ? `${e.height} cm` : '--'}</td>
         <td><span class="badge badge-neutral">${e.bcs ? `${e.bcs} / 9` : '5 / 9'}</span></td>
         <td style="font-size:0.84rem;">${e.notes || '--'}</td>
@@ -6990,7 +7161,7 @@ const app = {
       if ((filter === 'all' || filter === 'vaccine') && p.vaccinations) {
         p.vaccinations.forEach(v => events.push({ date: v.adminDate, type: 'Vaccination', title: `Immunized: ${v.name}`, desc: `Clinic: ${v.vet || 'Vet'} • Lot: ${v.lotNumber || 'N/A'}`, pet: p.name, color: 'success', icon: 'syringe' }));
       }
-      if ((filter === 'all' || filter === 'weight') && p.weight) {
+      if ((filter === 'all' || filter === 'weight') && Array.isArray(p.weight)) {
         p.weight.forEach(w => events.push({ date: w.date, type: 'Weight Check', title: `Weighed ${this.formatWeight(w.weight)}`, desc: `BCS: ${w.bcs || 5}/9 • Notes: ${w.notes || 'Normal'}`, pet: p.name, color: 'accent', icon: 'scale' }));
       }
       if ((filter === 'all' || filter === 'wellness') && p.wellness) {
@@ -7036,7 +7207,7 @@ const app = {
     const insights = [];
     this.state.pets.forEach(p => {
       // Weight variance insight
-      if (p.weight && p.weight.length >= 2) {
+      if (Array.isArray(p.weight) && p.weight.length >= 2) {
         const sortedW = [...p.weight].sort((a, b) => new Date(b.date) - new Date(a.date));
         const diff = sortedW[0].weight - sortedW[1].weight;
         if (Math.abs(diff) >= 0.5) {
@@ -7417,7 +7588,7 @@ const app = {
         html += `</table>`;
       }
 
-      if (document.getElementById('repSecWeight').checked && p.weight && p.weight.length > 0) {
+      if (document.getElementById('repSecWeight').checked && Array.isArray(p.weight) && p.weight.length > 0) {
         html += `<h3>Weight Trajectory</h3><table><tr><th>Date</th><th>Weight</th><th>Body Condition (BCS)</th><th>Notes</th></tr>`;
         p.weight.forEach(w => {
           html += `<tr><td>${w.date}</td><td>${this.formatWeight(w.weight)}</td><td>${w.bcs || 5}/9</td><td>${w.notes || '--'}</td></tr>`;
@@ -7487,7 +7658,7 @@ const app = {
     } else if (section === 'weight') {
       csv = ['Pet', 'Date', 'Weight_kg', 'BCS', 'Goal_kg', 'Notes'].map(escape).join(',') + '\n';
       pets.forEach(p => {
-        if (p.weight) p.weight.forEach(w => {
+        if (Array.isArray(p.weight)) p.weight.forEach(w => {
           csv += [p.name, w.date, w.weight, w.bcs, w.goal, w.notes].map(escape).join(',') + '\n';
         });
       });
@@ -7911,7 +8082,23 @@ const app = {
   // ==================== MODAL & CRUD HANDLERS ====================
   openModal(id) {
     const el = document.getElementById(id);
-    if (el) el.classList.add('active');
+    if (el) {
+      el.classList.add('active');
+      const body = el.querySelector('.modal-body');
+      if (body) body.scrollTop = 0;
+
+      // Pre-select active pet if user has a specific pet chosen (and not editing an existing record)
+      if (this.state && this.state.currentPetId && this.state.currentPetId !== 'all') {
+        const idInput = el.querySelector('input[id$="FormId"]');
+        const isNew = !idInput || !idInput.value;
+        if (isNew) {
+          const petSelect = el.querySelector('select[id$="FormPet"]');
+          if (petSelect && petSelect.querySelector(`option[value="${this.state.currentPetId}"]`)) {
+            petSelect.value = this.state.currentPetId;
+          }
+        }
+      }
+    }
   },
 
   closeModal(id) {
@@ -7953,7 +8140,17 @@ const app = {
     document.getElementById('petFormBreed').value = pet.breed || '';
     document.getElementById('petFormGender').value = pet.gender || 'Female';
     document.getElementById('petFormDob').value = pet.dob || '';
-    document.getElementById('petFormWeight').value = pet.weight || '';
+    
+    let weightVal = '';
+    if (typeof pet.currentWeight === 'number' && pet.currentWeight > 0) {
+      weightVal = pet.currentWeight;
+    } else if (Array.isArray(pet.weight) && pet.weight.length > 0) {
+      weightVal = pet.weight[0].weight;
+    } else if (typeof pet.weight === 'number') {
+      weightVal = pet.weight;
+    }
+    document.getElementById('petFormWeight').value = weightVal;
+
     document.getElementById('petFormMicrochip').value = pet.microchip || '';
     document.getElementById('petFormColor').value = pet.color || '';
     document.getElementById('petFormOwner').value = pet.owner ? `${pet.owner.name} (${pet.owner.phone})` : '';
@@ -7994,6 +8191,36 @@ const app = {
 
     const allergiesRaw = document.getElementById('petFormAllergies').value;
     const allergies = allergiesRaw ? allergiesRaw.split(',').map(s => s.trim()) : [];
+    const inputWeight = parseFloat(document.getElementById('petFormWeight').value) || 0;
+
+    let weightList = [];
+    if (existing && Array.isArray(existing.weight)) {
+      weightList = [...existing.weight];
+    } else if (existing && typeof existing.weight === 'number' && existing.weight > 0) {
+      weightList = [{
+        id: 'wt-base-' + id,
+        date: existing.dob || new Date().toISOString().split('T')[0],
+        weight: existing.weight,
+        bcs: 5,
+        goal: existing.weight,
+        notes: 'Baseline weight'
+      }];
+    }
+
+    if (inputWeight > 0) {
+      if (weightList.length === 0 || Math.abs(weightList[0].weight - inputWeight) > 0.05) {
+        weightList.unshift({
+          id: 'wt-' + Date.now(),
+          date: new Date().toISOString().split('T')[0],
+          weight: inputWeight,
+          bcs: 5,
+          goal: inputWeight,
+          notes: existing ? 'Updated profile weigh-in' : 'Initial registration weight'
+        });
+      }
+    }
+
+    const currentWeight = inputWeight > 0 ? inputWeight : (weightList.length > 0 ? weightList[0].weight : 0);
 
     const petData = {
       id,
@@ -8002,7 +8229,7 @@ const app = {
       breed: document.getElementById('petFormBreed').value,
       gender: document.getElementById('petFormGender').value,
       dob: document.getElementById('petFormDob').value,
-      weight: parseFloat(document.getElementById('petFormWeight').value) || 0,
+      currentWeight,
       microchip: document.getElementById('petFormMicrochip').value,
       color: document.getElementById('petFormColor').value,
       photo: document.getElementById('petFormAvatarPreview').src,
@@ -8021,7 +8248,7 @@ const app = {
       vaccinations: existing ? existing.vaccinations : [],
       preventiveCare: existing ? existing.preventiveCare : [],
       wellness: existing ? existing.wellness : [],
-      weight: existing ? existing.weight : [{ id: 'wt-' + Date.now(), date: new Date().toISOString().split('T')[0], weight: parseFloat(document.getElementById('petFormWeight').value) || 0, bcs: 5 }],
+      weight: weightList,
       nutrition: existing ? existing.nutrition : [],
       activity: existing ? existing.activity : [],
       grooming: existing ? existing.grooming : [],
@@ -8356,8 +8583,33 @@ const app = {
 
   // Weight Modal
   openWeightModal() {
-    document.getElementById('formWeight').reset();
-    document.getElementById('weightFormDate').value = new Date().toISOString().split('T')[0];
+    const form = document.getElementById('formWeight');
+    if (form) form.reset();
+    const dateInput = document.getElementById('weightFormDate');
+    if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+
+    // Pre-select the currently active pet
+    const petSelect = document.getElementById('weightFormPet');
+    if (petSelect) {
+      if (this.state.currentPetId && this.state.currentPetId !== 'all') {
+        petSelect.value = this.state.currentPetId;
+      } else if (this.state.pets && this.state.pets.length > 0) {
+        petSelect.value = this.state.pets[0].id;
+      }
+    }
+
+    // Dynamic placeholders reflecting current unit
+    const isImperial = this.state.settings && this.state.settings.unitSystem === 'imperial';
+    const unitLabel = isImperial ? 'lb' : 'kg';
+    const wtValInput = document.getElementById('weightFormValue');
+    if (wtValInput) {
+      wtValInput.placeholder = `e.g. ${isImperial ? '62.8' : '28.5'} (${unitLabel})`;
+    }
+    const goalInput = document.getElementById('weightFormGoal');
+    if (goalInput) {
+      goalInput.placeholder = `e.g. ${isImperial ? '60.0' : '28.0'} (${unitLabel})`;
+    }
+
     this.openModal('modalWeight');
   },
 
@@ -8365,37 +8617,60 @@ const app = {
     e.preventDefault();
     const petId = document.getElementById('weightFormPet').value;
     const pet = this.getPet(petId);
-    if (!pet) return;
+    if (!pet) {
+      this.showToast('Please select a registered pet', 'warning');
+      return;
+    }
 
     let wtVal = parseFloat(document.getElementById('weightFormValue').value);
-    if (this.state.settings.unitSystem === 'imperial') {
+    if (isNaN(wtVal) || wtVal <= 0) {
+      this.showToast('Please enter a valid positive weight value', 'warning');
+      return;
+    }
+
+    const isImperial = this.state.settings && this.state.settings.unitSystem === 'imperial';
+    if (isImperial) {
       // Convert entered lb to kg for internal storage
       wtVal = parseFloat((wtVal / 2.20462).toFixed(2));
     }
 
+    let goalVal = parseFloat(document.getElementById('weightFormGoal').value);
+    if (!isNaN(goalVal) && goalVal > 0) {
+      if (isImperial) {
+        goalVal = parseFloat((goalVal / 2.20462).toFixed(2));
+      }
+    } else {
+      goalVal = wtVal;
+    }
+
+    const dateVal = document.getElementById('weightFormDate').value || new Date().toISOString().split('T')[0];
+    const bcsVal = parseInt(document.getElementById('weightFormBcs').value) || 5;
+    const notesVal = document.getElementById('weightFormNotes').value.trim();
+
     const newEntry = {
       id: 'wt-' + Date.now(),
-      date: document.getElementById('weightFormDate').value,
+      date: dateVal,
       weight: wtVal,
-      bcs: parseInt(document.getElementById('weightFormBcs').value) || 5,
-      goal: parseFloat(document.getElementById('weightFormGoal').value) || wtVal,
-      notes: document.getElementById('weightFormNotes').value
+      bcs: bcsVal,
+      goal: goalVal,
+      notes: notesVal
     };
 
     if (!Array.isArray(pet.weight)) {
-      if (typeof pet.weight === 'number') {
-        pet.weight = [{ id: 'wt-baseline', date: new Date().toISOString().split('T')[0], weight: pet.weight, bcs: 5, goal: pet.weight, notes: 'Baseline' }];
+      if (typeof pet.weight === 'number' && pet.weight > 0) {
+        pet.weight = [{ id: 'wt-base-' + pet.id, date: pet.dob || dateVal, weight: pet.weight, bcs: 5, goal: pet.weight, notes: 'Baseline' }];
       } else {
         pet.weight = [];
       }
     }
+
     pet.weight.unshift(newEntry);
     pet.weight.sort((a, b) => new Date(b.date) - new Date(a.date));
     pet.currentWeight = pet.weight[0].weight;
 
     this.saveState(true);
     this.closeModal('modalWeight');
-    this.showToast(`Logged new weight: ${this.formatWeight(wtVal)}`, 'success');
+    this.showToast(`Logged weight for ${pet.name}: ${this.formatWeight(wtVal)}`, 'success');
   },
 
   deleteWeight(petId, id) {
@@ -8725,7 +9000,8 @@ const app = {
     const toggleBtn = document.getElementById('sidebarToggleBtn');
     if (toggleBtn) {
       toggleBtn.addEventListener('click', () => {
-        document.getElementById('appSidebar').classList.toggle('collapsed');
+        const isCollapsed = document.getElementById('appSidebar').classList.toggle('collapsed');
+        toggleBtn.title = isCollapsed ? 'Expand Sidebar' : 'Collapse Sidebar';
       });
     }
 
