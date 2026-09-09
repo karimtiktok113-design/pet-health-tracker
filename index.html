@@ -3357,6 +3357,273 @@
       white-space: pre-wrap;
       word-break: break-word;
     }
+
+    /* ==========================================================================
+       DOCUMENT VAULT CARDS — RESPONSIVE & INTERACTIVE
+       ========================================================================== */
+
+    /* Override the grid-3 inside the vault to use auto-fill columns */
+    #documentsGridContainer.grid-3 {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+      gap: 18px;
+      align-items: start;
+    }
+
+    /* Base card */
+    .doc-vault-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      cursor: pointer;
+      transition:
+        transform var(--transition-normal),
+        box-shadow var(--transition-normal),
+        border-color var(--transition-normal);
+      position: relative;
+      outline: none;
+    }
+    .doc-vault-card:hover,
+    .doc-vault-card:focus-visible {
+      transform: translateY(-4px) scale(1.01);
+      box-shadow: 0 16px 36px rgba(0,0,0,0.35), 0 0 0 2px rgba(var(--primary-rgb),0.25);
+      border-color: rgba(var(--primary-rgb), 0.4);
+    }
+    .doc-vault-card:active {
+      transform: translateY(-1px) scale(0.99);
+    }
+
+    /* --- THUMBNAIL BANNER --- */
+    .doc-vault-thumb {
+      width: 100%;
+      height: 148px;
+      position: relative;
+      overflow: hidden;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    /* Image thumbnails */
+    .doc-vault-thumb-img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform var(--transition-slow);
+    }
+    .doc-vault-card:hover .doc-vault-thumb-img img {
+      transform: scale(1.07);
+    }
+    /* Subtle darkening overlay on image */
+    .doc-vault-thumb-overlay {
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.04) 0%, rgba(0,0,0,0.28) 100%);
+      pointer-events: none;
+    }
+
+    /* PDF indicator thumbnail */
+    .doc-vault-thumb-pdf {
+      background: linear-gradient(135deg, #1e1e2e 0%, #2d1a1a 100%);
+      flex-direction: column;
+      gap: 6px;
+    }
+    .doc-vault-pdf-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: var(--radius-md);
+      background: rgba(239,68,68,0.15);
+      border: 1.5px solid rgba(239,68,68,0.3);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #ef4444;
+      transition: transform var(--transition-normal);
+    }
+    .doc-vault-card:hover .doc-vault-pdf-icon {
+      transform: scale(1.1) rotate(-4deg);
+    }
+    .doc-vault-pdf-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: rgba(239,68,68,0.85);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+    .doc-vault-pdf-name {
+      font-size: 0.68rem;
+      color: rgba(255,255,255,0.35);
+      max-width: 160px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      text-align: center;
+    }
+
+    /* Default (no file) indicator thumbnail */
+    .doc-vault-thumb-default {
+      flex-direction: column;
+      gap: 8px;
+    }
+    .doc-vault-thumb-success { background: linear-gradient(135deg, rgba(16,185,129,0.12), rgba(16,185,129,0.04)); }
+    .doc-vault-thumb-info    { background: linear-gradient(135deg, rgba(59,130,246,0.12), rgba(59,130,246,0.04)); }
+    .doc-vault-thumb-warning { background: linear-gradient(135deg, rgba(245,158,11,0.12), rgba(245,158,11,0.04)); }
+    .doc-vault-thumb-accent  { background: linear-gradient(135deg, rgba(56,189,248,0.12), rgba(56,189,248,0.04)); }
+    .doc-vault-thumb-primary { background: linear-gradient(135deg, rgba(var(--primary-rgb),0.12), rgba(var(--primary-rgb),0.04)); }
+    .doc-vault-default-icon {
+      font-size: 2.2rem;
+      line-height: 1;
+      filter: drop-shadow(0 2px 8px rgba(0,0,0,0.3));
+      transition: transform var(--transition-normal);
+    }
+    .doc-vault-card:hover .doc-vault-default-icon {
+      transform: scale(1.12) rotate(-4deg);
+    }
+
+    /* Category chip overlay (shown over thumbnail) */
+    .doc-vault-cat-chip {
+      position: absolute;
+      bottom: 8px;
+      left: 8px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      padding: 3px 8px;
+      border-radius: var(--radius-full);
+      backdrop-filter: blur(6px);
+      -webkit-backdrop-filter: blur(6px);
+      white-space: nowrap;
+      max-width: calc(100% - 16px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .doc-vault-cat-chip-success { background: rgba(16,185,129,0.85); color: #fff; }
+    .doc-vault-cat-chip-info    { background: rgba(59,130,246,0.85); color: #fff; }
+    .doc-vault-cat-chip-warning { background: rgba(245,158,11,0.85); color: #000; }
+    .doc-vault-cat-chip-accent  { background: rgba(56,189,248,0.85); color: #000; }
+    .doc-vault-cat-chip-primary { background: rgba(var(--primary-rgb),0.9); color: var(--primary-text, #000); }
+    .doc-vault-cat-chip-neutral { background: rgba(100,116,139,0.85); color: #fff; }
+
+    /* --- CARD BODY --- */
+    .doc-vault-body {
+      padding: 14px 16px 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex: 1;
+    }
+    .doc-vault-title {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: var(--text-main);
+      line-height: 1.3;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+    .doc-vault-meta {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+    .doc-vault-pet-tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--primary);
+      background: rgba(var(--primary-rgb),0.12);
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+    }
+    .doc-vault-notes {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      line-height: 1.45;
+      overflow: hidden;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      line-clamp: 2;
+      -webkit-box-orient: vertical;
+    }
+
+    /* --- CARD FOOTER --- */
+    .doc-vault-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: auto;
+      padding-top: 10px;
+      border-top: 1px solid var(--border-color);
+    }
+    .doc-vault-date {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.7rem;
+      color: var(--text-dim);
+      flex: 1;
+      min-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .doc-vault-actions {
+      display: flex;
+      gap: 4px;
+      flex-shrink: 0;
+      opacity: 0;
+      transform: translateX(4px);
+      transition: opacity var(--transition-fast), transform var(--transition-fast);
+    }
+    .doc-vault-card:hover .doc-vault-actions,
+    .doc-vault-card:focus-within .doc-vault-actions {
+      opacity: 1;
+      transform: translateX(0);
+    }
+    .doc-vault-action-btn {
+      background: var(--bg-surface);
+      border: 1px solid var(--border-color);
+      border-radius: var(--radius-sm);
+      color: var(--text-muted);
+      width: 28px;
+      height: 28px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background var(--transition-fast), color var(--transition-fast), border-color var(--transition-fast);
+      padding: 0;
+    }
+    .doc-vault-action-btn:hover {
+      background: var(--bg-card-hover);
+      color: var(--text-main);
+      border-color: var(--border-color);
+    }
+    .doc-vault-action-btn.doc-vault-action-danger:hover {
+      background: rgba(239,68,68,0.15);
+      color: var(--danger);
+      border-color: rgba(239,68,68,0.3);
+    }
+
+    /* Responsive: single column on very small screens */
+    @media (max-width: 480px) {
+      #documentsGridContainer.grid-3 {
+        grid-template-columns: 1fr;
+      }
+    }
+    @media (min-width: 481px) and (max-width: 767px) {
+      #documentsGridContainer.grid-3 {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
   </style>
 </head>
 <body>
@@ -6126,8 +6393,16 @@
           </div>
           <div class="form-group">
             <label class="form-label">Select File (Image or PDF document)</label>
-            <input type="file" class="form-control" id="docFormFile" required onchange="app.handleDocumentFileUpload(event)">
-            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Files are converted to compact offline data objects stored safely in your browser.</div>
+            <input type="file" class="form-control" id="docFormFile" accept="image/*,.pdf" required onchange="app.handleDocumentFileUpload(event)">
+            <div style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Supported: JPG, PNG, GIF, PDF (max 4 MB). Stored securely in your browser.</div>
+            <!-- Live preview thumbnail -->
+            <div id="docFilePreviewWrap" style="display:none; margin-top:10px; border-radius:var(--radius-md); overflow:hidden; border:1px solid var(--border-color); max-height:160px;">
+              <img id="docFilePreviewImg" src="" alt="Preview" style="width:100%; max-height:160px; object-fit:cover; display:none;">
+              <div id="docFilePdfBadge" style="display:none; padding:18px; text-align:center; background:var(--bg-surface);">
+                <svg width="36" height="36" style="color:var(--danger); opacity:0.8;"><use href="#icon-folder"/></svg>
+                <div id="docFilePdfName" style="font-size:0.8rem; color:var(--text-muted); margin-top:6px;"></div>
+              </div>
+            </div>
           </div>
           <div class="form-group">
             <label class="form-label">Notes</label>
@@ -8878,35 +9153,183 @@ const app = {
     docs.sort((a, b) => new Date(b.date || 0) - new Date(a.date || 0) || (b.id || '').localeCompare(a.id || ''));
 
     if (docs.length === 0) {
-      container.innerHTML = '<div style="grid-column:1/-1; text-align:center; padding:48px; color:var(--text-muted);">No documents in the vault yet. Click "Upload Document" above.</div>';
+      container.innerHTML = `
+        <div style="grid-column:1/-1; text-align:center; padding:64px 24px; color:var(--text-muted);">
+          <div style="width:72px; height:72px; border-radius:50%; background:rgba(var(--primary-rgb),0.1); display:flex; align-items:center; justify-content:center; margin:0 auto 16px;">
+            <svg width="32" height="32" style="color:var(--primary);"><use href="#icon-folder"/></svg>
+          </div>
+          <div style="font-size:1.05rem; font-weight:600; color:var(--text-main); margin-bottom:8px;">No Documents in Vault</div>
+          <div style="font-size:0.88rem;">Click "Upload Document" above to securely store vaccination certificates, lab reports, and more.</div>
+        </div>
+      `;
       return;
     }
 
+    const catColors = {
+      'Vaccination Certificate': 'success',
+      'Medical Lab Report': 'info',
+      'Prescription': 'warning',
+      'Insurance Policy': 'accent',
+      'Microchip Record': 'primary',
+      'Adoption Certificate': 'primary',
+      'Veterinary Invoice': 'warning'
+    };
+
+    const catIcons = {
+      'Vaccination Certificate': '💉',
+      'Medical Lab Report': '🔬',
+      'Prescription': '💊',
+      'Insurance Policy': '🛡️',
+      'Microchip Record': '📡',
+      'Adoption Certificate': '🏠',
+      'Veterinary Invoice': '🧾'
+    };
+
     docs.forEach(d => {
       const card = document.createElement('div');
-      card.className = 'card clickable-card';
+      card.className = 'doc-vault-card';
+      card.setAttribute('tabindex', '0');
+      card.setAttribute('role', 'button');
+      card.setAttribute('aria-label', `View document: ${d.title}`);
       card.onclick = () => this.showEntryDetail('document', d.petId, d.id);
+      card.onkeydown = (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); this.showEntryDetail('document', d.petId, d.id); } };
+
+      const color = catColors[d.category] || 'primary';
+      const catIcon = catIcons[d.category] || '📄';
+      const hasImage = d.fileData && d.fileType && d.fileType.startsWith('image/');
+      const isPdf = d.fileData && d.fileType === 'application/pdf';
+      const fileName = d.fileName || '';
+
+      let thumbnailHtml = '';
+      if (hasImage) {
+        thumbnailHtml = `
+          <div class="doc-vault-thumb doc-vault-thumb-img">
+            <img src="${d.fileData}" alt="${d.title}" onerror="this.parentElement.style.display='none'" loading="lazy">
+            <div class="doc-vault-thumb-overlay"></div>
+            <span class="doc-vault-cat-chip doc-vault-cat-chip-${color}">${catIcon} ${d.category}</span>
+          </div>
+        `;
+      } else if (isPdf) {
+        thumbnailHtml = `
+          <div class="doc-vault-thumb doc-vault-thumb-pdf">
+            <div class="doc-vault-pdf-icon">
+              <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+            </div>
+            <div class="doc-vault-pdf-label">PDF Document</div>
+            ${fileName ? `<div class="doc-vault-pdf-name">${fileName}</div>` : ''}
+            <span class="doc-vault-cat-chip doc-vault-cat-chip-${color}">${catIcon} ${d.category}</span>
+          </div>
+        `;
+      } else {
+        thumbnailHtml = `
+          <div class="doc-vault-thumb doc-vault-thumb-default doc-vault-thumb-${color}">
+            <div class="doc-vault-default-icon">${catIcon}</div>
+            <span class="doc-vault-cat-chip doc-vault-cat-chip-${color}">${catIcon} ${d.category}</span>
+          </div>
+        `;
+      }
+
       card.innerHTML = `
-        <div style="display:flex; align-items:center; gap:12px; margin-bottom:12px;">
-          <div style="width:40px; height:40px; border-radius:var(--radius-md); background:rgba(var(--primary-rgb),0.12); color:var(--primary); display:flex; align-items:center; justify-content:center;">
-            <svg width="20" height="20"><use href="#icon-folder"/></svg>
+        ${thumbnailHtml}
+        <div class="doc-vault-body">
+          <div class="doc-vault-title" title="${d.title}">${d.title}</div>
+          <div class="doc-vault-meta">
+            <span class="doc-vault-pet-tag">${d.petName}</span>
           </div>
-          <div>
-            <div style="font-weight:700; font-size:0.95rem; color:var(--text-main);">${d.title}</div>
-            <div style="font-size:0.75rem; color:var(--text-muted);">${d.petName} • ${d.category}</div>
-          </div>
-        </div>
-        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:16px;">${d.notes || 'Secure offline document record.'}</div>
-        <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--border-color); padding-top:12px;">
-          <span style="font-size:0.75rem; color:var(--text-dim);">${d.date || 'Saved'}</span>
-          <div style="display:flex; gap:6px;">
-            <button class="btn btn-sm btn-secondary btn-icon-only" onclick="event.stopPropagation(); app.editDocument('${d.petId}', '${d.id}')" title="Edit"><svg width="14" height="14"><use href="#icon-edit"/></svg></button>
-            <button class="btn btn-sm btn-danger btn-icon-only" onclick="event.stopPropagation(); app.deleteDocument('${d.petId}', '${d.id}')" title="Delete"><svg width="14" height="14"><use href="#icon-trash"/></svg></button>
+          ${d.notes ? `<div class="doc-vault-notes">${d.notes}</div>` : ''}
+          <div class="doc-vault-footer">
+            <span class="doc-vault-date"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg> ${d.date || 'Uploaded'}</span>
+            <div class="doc-vault-actions" onclick="event.stopPropagation()">
+              <button class="doc-vault-action-btn" onclick="app.editDocument('${d.petId}', '${d.id}')" title="Edit document" aria-label="Edit document">
+                <svg width="13" height="13"><use href="#icon-edit"/></svg>
+              </button>
+              <button class="doc-vault-action-btn doc-vault-action-danger" onclick="app.deleteDocument('${d.petId}', '${d.id}')" title="Delete document" aria-label="Delete document">
+                <svg width="13" height="13"><use href="#icon-trash"/></svg>
+              </button>
+            </div>
           </div>
         </div>
       `;
       container.appendChild(card);
     });
+  },
+
+  // ==================== DOCUMENT IMAGE LIGHTBOX ====================
+  _openDocImageLightbox(docId, title) {
+    // Find the document data across all pets
+    let imgSrc = null;
+    for (const pet of this.state.pets) {
+      const doc = (pet.documents || []).find(d => d.id === docId);
+      if (doc && doc.fileData) { imgSrc = doc.fileData; break; }
+    }
+    if (!imgSrc) return;
+
+    // Remove any existing lightbox
+    const existing = document.getElementById('_docLightbox');
+    if (existing) existing.remove();
+
+    const lb = document.createElement('div');
+    lb.id = '_docLightbox';
+    lb.setAttribute('role', 'dialog');
+    lb.setAttribute('aria-label', title || 'Document Image');
+    lb.style.cssText = `
+      position: fixed; inset: 0; z-index: 9999;
+      background: rgba(0,0,0,0.92);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      display: flex; align-items: center; justify-content: center;
+      cursor: zoom-out;
+      animation: lbFadeIn 0.18s ease;
+    `;
+
+    lb.innerHTML = `
+      <style>
+        @keyframes lbFadeIn  { from { opacity:0; transform:scale(0.96); } to { opacity:1; transform:scale(1); } }
+        @keyframes lbFadeOut { from { opacity:1; } to { opacity:0; } }
+      </style>
+      <!-- Close button -->
+      <button id="_docLbClose" aria-label="Close image" style="
+        position: absolute; top: 18px; right: 18px;
+        background: rgba(255,255,255,0.12); border: 1px solid rgba(255,255,255,0.2);
+        border-radius: 50%; width: 42px; height: 42px;
+        display: flex; align-items: center; justify-content: center;
+        color: #fff; cursor: pointer; font-size: 1.1rem; font-weight: 700;
+        transition: background 0.15s;
+      " onmouseover="this.style.background='rgba(255,255,255,0.22)'" onmouseout="this.style.background='rgba(255,255,255,0.12)'">
+        ✕
+      </button>
+      <!-- Title -->
+      ${title ? `<div style="
+        position: absolute; top: 20px; left: 50%; transform: translateX(-50%);
+        color: rgba(255,255,255,0.75); font-size: 0.85rem; font-weight: 600;
+        white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+        max-width: calc(100vw - 120px); text-align: center;
+        pointer-events: none;
+      ">${title}</div>` : ''}
+      <!-- Image -->
+      <img src="${imgSrc}" alt="${title || 'Document'}" style="
+        max-width: 94vw; max-height: 90vh;
+        object-fit: contain; border-radius: 6px;
+        box-shadow: 0 24px 64px rgba(0,0,0,0.8);
+        cursor: default;
+        animation: lbFadeIn 0.2s ease;
+        user-select: none;
+      " onclick="event.stopPropagation()">
+    `;
+
+    document.body.appendChild(lb);
+
+    const close = () => {
+      lb.style.animation = 'lbFadeOut 0.15s ease forwards';
+      setTimeout(() => lb.remove(), 150);
+      document.removeEventListener('keydown', onKey);
+    };
+
+    const onKey = (e) => { if (e.key === 'Escape') close(); };
+    document.addEventListener('keydown', onKey);
+
+    lb.addEventListener('click', close);
+    lb.querySelector('#_docLbClose').addEventListener('click', (e) => { e.stopPropagation(); close(); });
   },
 
   // ==================== MASTER HEALTH TIMELINE ====================
@@ -12466,15 +12889,63 @@ const app = {
     if (fileInput) fileInput.required = true;
     const titleEl = document.getElementById('modalDocTitle');
     if (titleEl) titleEl.textContent = 'Upload Pet Document';
+    // Clear any lingering preview state
+    this._pendingDocFileData = null;
+    this._pendingDocFileType = null;
+    this._pendingDocFileName = null;
+    const wrap = document.getElementById('docFilePreviewWrap');
+    if (wrap) wrap.style.display = 'none';
+    const prevImg = document.getElementById('docFilePreviewImg');
+    if (prevImg) { prevImg.src = ''; prevImg.style.display = 'none'; }
+    const pdfBadge = document.getElementById('docFilePdfBadge');
+    if (pdfBadge) pdfBadge.style.display = 'none';
     this.openModal('modalDocument');
   },
 
+  _pendingDocFileData: null,
+  _pendingDocFileType: null,
+  _pendingDocFileName: null,
+
   handleDocumentFileUpload(e) {
     const file = e.target.files[0];
-    if (file && file.size > 2000000) {
-      alert('Please choose a file smaller than 2 MB to preserve browser offline storage.');
+    if (!file) return;
+
+    const maxSize = 4 * 1024 * 1024; // 4 MB
+    if (file.size > maxSize) {
+      alert('Please choose a file smaller than 4 MB to preserve browser offline storage.');
       e.target.value = '';
+      this._pendingDocFileData = null;
+      this._pendingDocFileType = null;
+      this._pendingDocFileName = null;
+      const wrap = document.getElementById('docFilePreviewWrap');
+      if (wrap) wrap.style.display = 'none';
+      return;
     }
+
+    const reader = new FileReader();
+    reader.onload = (evt) => {
+      const dataUrl = evt.target.result;
+      this._pendingDocFileData = dataUrl;
+      this._pendingDocFileType = file.type;
+      this._pendingDocFileName = file.name;
+
+      const wrap = document.getElementById('docFilePreviewWrap');
+      const prevImg = document.getElementById('docFilePreviewImg');
+      const pdfBadge = document.getElementById('docFilePdfBadge');
+      const pdfName = document.getElementById('docFilePdfName');
+
+      if (wrap) wrap.style.display = 'block';
+
+      if (file.type.startsWith('image/')) {
+        if (prevImg) { prevImg.src = dataUrl; prevImg.style.display = 'block'; }
+        if (pdfBadge) pdfBadge.style.display = 'none';
+      } else {
+        if (prevImg) prevImg.style.display = 'none';
+        if (pdfBadge) pdfBadge.style.display = 'block';
+        if (pdfName) pdfName.textContent = file.name;
+      }
+    };
+    reader.readAsDataURL(file);
   },
 
   handleDocumentSubmit(e) {
@@ -12491,22 +12962,37 @@ const app = {
     if (!pet.documents) pet.documents = [];
     const idx = pet.documents.findIndex(d => d.id === id);
     if (idx >= 0) {
-      pet.documents[idx] = {
+      // Keep existing fileData if no new file was selected
+      const updatedDoc = {
         ...pet.documents[idx],
         title,
         category,
         notes
       };
+      if (this._pendingDocFileData) {
+        updatedDoc.fileData = this._pendingDocFileData;
+        updatedDoc.fileType = this._pendingDocFileType;
+        updatedDoc.fileName = this._pendingDocFileName;
+      }
+      pet.documents[idx] = updatedDoc;
     } else {
       const newDoc = {
         id,
         title,
         category,
         date: new Date().toISOString().split('T')[0],
-        notes
+        notes,
+        fileData: this._pendingDocFileData || null,
+        fileType: this._pendingDocFileType || null,
+        fileName: this._pendingDocFileName || null
       };
       pet.documents.unshift(newDoc);
     }
+
+    // Clear pending file
+    this._pendingDocFileData = null;
+    this._pendingDocFileType = null;
+    this._pendingDocFileName = null;
 
     this.saveState(true);
     this.closeModal('modalDocument');
@@ -13029,7 +13515,105 @@ const app = {
       case 'document':
         primaryTitle = item.title || 'Document Record';
         subtitle = `Category: ${item.category || 'General'}`;
+
+        // Build image / PDF preview HTML
+        const hasDocImage = item.fileData && item.fileType && item.fileType.startsWith('image/');
+        const isDocPdf    = item.fileData && item.fileType === 'application/pdf';
+
+        let docPreviewHtml = '';
+        if (hasDocImage) {
+          // Full-size image with click-to-zoom lightbox
+          docPreviewHtml = `
+            <div style="
+              grid-column: 1 / -1;
+              border-radius: var(--radius-lg);
+              overflow: hidden;
+              border: 1px solid var(--border-color);
+              background: var(--bg-surface);
+              position: relative;
+              cursor: zoom-in;
+            " onclick="app._openDocImageLightbox('${item.id}', '${(item.title || '').replace(/'/g, '\\\'')}')" title="Click to view full size">
+              <img
+                src="${item.fileData}"
+                alt="${item.title || 'Document'}"
+                style="
+                  width: 100%;
+                  max-height: 420px;
+                  object-fit: contain;
+                  display: block;
+                  background: #000;
+                "
+              >
+              <div style="
+                position: absolute;
+                top: 10px;
+                right: 10px;
+                background: rgba(0,0,0,0.55);
+                backdrop-filter: blur(4px);
+                border-radius: var(--radius-sm);
+                padding: 5px 10px;
+                font-size: 0.7rem;
+                color: #fff;
+                font-weight: 600;
+                display: flex;
+                align-items: center;
+                gap: 5px;
+                pointer-events: none;
+              ">
+                <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/><path d="M11 8v6M8 11h6"/></svg>
+                Click to zoom
+              </div>
+            </div>
+          `;
+        } else if (isDocPdf) {
+          docPreviewHtml = `
+            <div style="
+              grid-column: 1 / -1;
+              background: linear-gradient(135deg, #1e1e2e, #2d1a1a);
+              border: 1px solid rgba(239,68,68,0.25);
+              border-radius: var(--radius-lg);
+              padding: 28px 20px;
+              display: flex;
+              flex-direction: column;
+              align-items: center;
+              gap: 12px;
+            ">
+              <div style="
+                width: 64px; height: 64px;
+                border-radius: var(--radius-md);
+                background: rgba(239,68,68,0.15);
+                border: 1.5px solid rgba(239,68,68,0.35);
+                display: flex; align-items: center; justify-content: center;
+                color: #ef4444;
+              ">
+                <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+              </div>
+              <div style="text-align:center;">
+                <div style="font-size:0.78rem; font-weight:700; color:rgba(239,68,68,0.9); letter-spacing:0.06em; text-transform:uppercase; margin-bottom:4px;">PDF Document</div>
+                ${item.fileName ? `<div style="font-size:0.8rem; color:rgba(255,255,255,0.5);">${item.fileName}</div>` : ''}
+              </div>
+              <a href="${item.fileData}" download="${item.fileName || (item.title || 'document') + '.pdf'}" onclick="event.stopPropagation()" style="
+                display: inline-flex; align-items: center; gap: 7px;
+                padding: 8px 18px;
+                border-radius: var(--radius-full);
+                background: rgba(239,68,68,0.2);
+                border: 1px solid rgba(239,68,68,0.35);
+                color: #ef4444;
+                font-size: 0.82rem;
+                font-weight: 600;
+                text-decoration: none;
+                cursor: pointer;
+                transition: background 0.15s;
+              " onmouseover="this.style.background='rgba(239,68,68,0.32)'" onmouseout="this.style.background='rgba(239,68,68,0.2)'">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download PDF
+              </a>
+            </div>
+          `;
+        }
+
         fieldsHtml = `
+          ${docPreviewHtml}
           <div class="entry-detail-field">
             <div class="entry-detail-label">Document Category</div>
             <div class="entry-detail-value"><span class="badge badge-neutral">${item.category || 'General'}</span></div>
@@ -13040,7 +13624,7 @@ const app = {
           </div>
           <div class="entry-detail-field" style="grid-column: 1 / -1;">
             <div class="entry-detail-label">Storage Status</div>
-            <div class="entry-detail-value" style="color:var(--success);">Stored securely in Pet Vault</div>
+            <div class="entry-detail-value" style="color:var(--success);">✓ Stored securely in Pet Vault</div>
           </div>
         `;
         if (item.notes) {
